@@ -1,0 +1,480 @@
+#include "trajectory.h"
+#include "trj_plan.h"
+#include "pose_plan.h"
+#include "FreeRTOS.h"
+#include "task.h"
+
+void StartTrj(Winch *winch)
+{
+    switch (winch->trj)
+    {
+    case Winch_Trj_stop:
+        Winch_Stop(winch);
+        winch->trj_CpltFlag = 0;
+        break;
+    case Winch_Trj_rise:
+        Winch_Start_Rise(winch);
+        break;
+    case Winch_Trj_line:
+        Winch_Start_Line(winch);
+        break;
+    case Winch_Trj_line1:
+        Winch_Start_Line1(winch);
+        // Winch_Start_Circle1(winch);
+        break;
+    case Winch_Trj_line2:
+        Winch_Start_Line2(winch);
+        // Winch_Start_Circle2(winch);
+        break;
+    case Winch_Trj_line3:
+        Winch_Start_Line3(winch);
+        // Winch_Start_Circle3(winch);
+        break;
+    case Winch_Trj_poly:
+        Winch_Start_Poly(winch);
+        break;
+    case Winch_Trj_fall:
+        Winch_Start_Fall(winch);
+        break;
+    case Winch_Trj_SC:
+        Winch_Start_SelfCalibration(winch);
+        break;
+    default:
+        break;
+    }
+}
+
+void Winch_Stop(Winch *winch)
+{
+    //若从其他轨迹切回停止状态，重新获取初始位置
+    if(winch->last_trj != Winch_Trj_stop)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+    }
+
+    for (uint8_t i = 0; i < 4; i++)
+    {
+        winch->CAN1_M2006[i]->ref_pos = winch->CAN1_M2006[i]->init_pos;
+    }
+
+    winch->last_trj = Winch_Trj_stop;
+}
+
+void Winch_Start_Rise(Winch *winch)
+{
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch, 81, 0.1, winch_rise_angle, winch_rise_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_rise;
+    }
+}
+
+void Winch_Start_Line(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        // Winch_Run_Step(winch,  61, 0.1, winch_line_step1_angle, winch_line_step1_pose);
+        // Winch_Run_Step(winch, 121, 0.1, winch_line_step2_angle, winch_line_step2_pose);
+        // Winch_Run_Step(winch,  61, 0.1, winch_line_step3_angle, winch_line_step3_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line;
+    }
+}
+
+void Winch_Start_Line1(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line1)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch,  61, 0.1, winch_line1_angle, winch_line1_pose);
+        // Winch_Run_Step(winch,  101, 0.1, winch_repeat1_angle, winch_repeat1_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line1;
+    }
+}
+
+void Winch_Start_Line2(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line2)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch,  121, 0.1, winch_line2_angle, winch_line2_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line2;
+    }
+}
+
+void Winch_Start_Line3(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line3)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch,  61, 0.1, winch_line3_angle, winch_line3_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line3;
+    }
+}
+
+void Winch_Start_Circle1(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line1)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch,  61, 0.1, winch_circle1_angle, winch_circle1_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line1;
+    }
+}
+
+void Winch_Start_Circle2(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line2)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch,  201, 0.1, winch_circle2_angle, winch_circle2_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line2;
+    }
+}
+
+void Winch_Start_Circle3(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line3)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch,  61, 0.1, winch_circle3_angle, winch_circle3_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line3;
+    }
+}
+
+void Winch_Start_Swim1(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line1)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        // Winch_Run_Step(winch,  101, 0.1, winch_swim1_angle, winch_swim1_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line1;
+    }
+}
+
+void Winch_Start_Swim2(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line2)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        // Winch_Run_Step(winch,  161, 0.1, winch_swim2_step1_angle, winch_swim2_step1_pose);
+        // Winch_Run_Step(winch,  161, 0.1, winch_swim2_step2_angle, winch_swim2_step2_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line2;
+    }
+}
+
+void Winch_Start_Swim3(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_line3)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        // Winch_Run_Step(winch,  101, 0.1, winch_swim3_angle, winch_swim3_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_line3;
+    }
+}
+
+void Winch_Start_Poly(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_poly)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        // Winch_Run_Step(winch, 61, 0.1, winch_poly3_step1_angle, winch_poly3_step1_pose);
+        // Winch_Run_Step(winch, 41, 0.1, winch_poly3_step2_angle, winch_poly3_step2_pose);
+        // Winch_Run_Step(winch, 81, 0.1, winch_poly3_step3_angle, winch_poly3_step3_pose);
+        // Winch_Run_Step(winch, 81, 0.1, winch_poly3_step4_angle, winch_poly3_step4_pose);
+        // Winch_Run_Step(winch, 41, 0.1, winch_poly3_step5_angle, winch_poly3_step5_pose);
+        // Winch_Run_Step(winch, 61, 0.1, winch_poly3_step6_angle, winch_poly3_step6_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_poly;
+    }
+}
+
+void Winch_Start_Fall(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_fall)
+        winch->trj_CpltFlag = 0;
+    
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step(winch, 81, 0.1, winch_fall_angle, winch_fall_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_fall;
+    }
+}
+
+void Winch_Run_Step(Winch *winch, uint16_t t_num, float time_step, float (*motor_angle)[t_num], float (*pose_ref)[t_num])
+{
+    for(uint16_t i =1; i < t_num; i++)
+    {
+        if (winch->trj == Winch_Trj_stop)
+        {
+            break;
+        }
+
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            winch->CAN1_M2006[j]->ref_pos = -motor_angle[j][i] + winch->CAN1_M2006[j]->init_pos;
+        }
+
+            winch->poseX_ref = pose_ref[0][i];
+            winch->poseY_ref = pose_ref[1][i];
+        
+        vTaskDelay(time_step * 1000 / portTICK_RATE_MS);
+        
+    }
+}
+
+// 自标定模式启动函数 - 补全sc_current_point更新逻辑
+void Winch_Start_SelfCalibration(Winch *winch)
+{
+    if(winch->last_trj != Winch_Trj_SC || winch->sc_current_point != 0)
+        winch->trj_CpltFlag = 0;
+
+    if(winch->trj_CpltFlag == 0)
+    {
+        float current_pos[4];
+        float target_pos[4];
+        float trajectory[4][61];
+        float ref_pose[4][61] = {0};
+        
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+            current_pos[i] = winch->CAN1_M2006[i]->init_pos;
+        }
+        
+        // 获取目标位置
+        for (uint8_t i = 0; i < 4; i++)
+        {
+            target_pos[i] = winch_sc_positions[winch->sc_current_point][i];
+        }
+
+        // 生成轨迹
+        Generate_SelfCalibration_Trajectory(current_pos, target_pos, trajectory);
+        
+        // 执行轨迹
+        Winch_Run_Step(winch, 61, 0.1, trajectory, ref_pose);
+
+        // 更新sc_current_point到下一个标定点
+        if(winch->sc_current_point < 3)
+        {
+            winch->sc_current_point++;  // 移动到下一个标定点
+        }
+        else
+        {
+            // 所有标定点完成，重置为0并设置完成标志
+            winch->sc_current_point = 0;
+
+        }
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_SC;
+    }
+}
+
+//// 自标定模式轨迹执行函数
+//void Winch_Run_SelfCalibration_Step(Winch *winch, uint8_t point_index)
+//{
+//    float current_pos[4];
+//    float target_pos[4];
+//    float trajectory[4][61];
+//    
+//    // 获取当前位置
+//    for (uint8_t i = 0; i < 4; i++)
+//    {
+//        current_pos[i] = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+//    }
+//    
+//    // 获取目标位置
+//    for (uint8_t i = 0; i < 4; i++)
+//    {
+//        target_pos[i] = winch_sc_positions[point_index][i];
+//    }
+//    
+//    // 生成轨迹
+//    Generate_SelfCalibration_Trajectory(current_pos, target_pos, trajectory);
+//    
+//    // 执行轨迹
+//    Winch_Run_Step(winch, 61, 0.1, trajectory, NULL);
+//}
+
+//// 自标定模式命令处理函数 - 简化版本
+//void Winch_SCMode_Command(Winch *winch)
+//{
+//    if(winch->mode != Winch_mode_SC)
+//    {
+//        // 切换到自标定模式
+//        winch->mode = Winch_mode_SC;
+//        winch->trj = Winch_Trj_SC;
+//        winch->sc_current_point = 0;
+//        winch->trj_CpltFlag = 0;
+//    }
+//    else
+//    {
+//        // 在自标定模式下，移动到下一个标定点
+//        if(winch->sc_current_point < 3)
+//        {
+//            winch->sc_current_point++;
+//            winch->trj_CpltFlag = 0;
+//        }
+//        else
+//        {
+//            // 所有标定点完成，退出自标定模式
+//            winch->mode = Winch_mode_stop;
+//            winch->trj = Winch_Trj_stop;
+//            winch->sc_current_point = 0;
+//            winch->trj_CpltFlag = 1;
+//        }
+//    }
+//}
+
+// 生成自标定模式轨迹数据
+void Generate_SelfCalibration_Trajectory(float current_pos[4], float target_pos[4], float (*trajectory)[61])
+{
+    // 生成从当前位置到目标位置的平滑轨迹
+    for(uint16_t i = 0; i < 61; i++)
+    {
+        float t = (float)i / 60.0f; // 归一化时间 [0,1]
+        
+        // 使用五次多项式插值生成平滑轨迹
+        float t2 = t * t;
+        float t3 = t2 * t;
+        float t4 = t3 * t;
+        float t5 = t4 * t;
+        
+        // 五次多项式系数：h(t) = 6t^5 - 15t^4 + 10t^3
+        float h = 6.0f * t5 - 15.0f * t4 + 10.0f * t3;
+        
+        for(uint8_t j = 0; j < 4; j++)
+        {
+            trajectory[j][i] = current_pos[j] + h * (target_pos[j] - current_pos[j]);
+        }
+    }
+}
