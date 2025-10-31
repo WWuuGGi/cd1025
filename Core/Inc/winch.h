@@ -49,6 +49,7 @@ typedef struct winch_t
 
     // 自标定模式相关变量
     uint8_t sc_current_point; //当前标定点索引
+    uint8_t sc_running;
 
 } Winch;
 

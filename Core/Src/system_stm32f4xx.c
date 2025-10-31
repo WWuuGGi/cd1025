@@ -59,7 +59,7 @@
   * @}
   */
 
-/** @addtogroup STM32F4xx_System_Private_TypesDefinitions
+/** @addtogroup STM32F4xx_System_Private_TypesDefinitions 
   * @{
   */
 

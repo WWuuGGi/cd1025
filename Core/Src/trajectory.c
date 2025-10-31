@@ -354,35 +354,22 @@ void Winch_Run_Step(Winch *winch, uint16_t t_num, float time_step, float (*motor
 // 自标定模式启动函数 - 补全sc_current_point更新逻辑
 void Winch_Start_SelfCalibration(Winch *winch)
 {
-    if(winch->last_trj != Winch_Trj_SC || winch->sc_current_point != 0)
+    if(winch->last_trj != Winch_Trj_SC || winch->sc_running == 1)
         winch->trj_CpltFlag = 0;
 
     if(winch->trj_CpltFlag == 0)
     {
-        float current_pos[4];
-        float target_pos[4];
-        float trajectory[4][61];
-        float ref_pose[4][61] = {0};
-        
+
         for (uint8_t i = 0; i < 4; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
-            current_pos[i] = winch->CAN1_M2006[i]->init_pos;
         }
-        
-        // 获取目标位置
-        for (uint8_t i = 0; i < 4; i++)
-        {
-            target_pos[i] = winch_sc_positions[winch->sc_current_point][i];
-        }
-
-        // 生成轨迹
-        Generate_SelfCalibration_Trajectory(current_pos, target_pos, trajectory);
-        
+				
         // 执行轨迹
-        Winch_Run_Step(winch, 61, 0.1, trajectory, ref_pose);
+        //Winch_Run_Step(winch, 61, 0.1, trajectory, ref_pose);
+        Winch_Run_Step(winch,  61, 0.1, sc_angles[winch->sc_current_point], sc_poses[winch->sc_current_point]);
 
-        // 更新sc_current_point到下一个标定点
+        //更新sc_current_point到下一个标定点
         if(winch->sc_current_point < 3)
         {
             winch->sc_current_point++;  // 移动到下一个标定点
@@ -396,6 +383,7 @@ void Winch_Start_SelfCalibration(Winch *winch)
         winch->trj_CpltFlag = 1;
         winch->trj_index = 0;
         winch->last_trj = Winch_Trj_SC;
+        winch->sc_running = 0;
     }
 }
 
@@ -456,7 +444,7 @@ void Winch_Start_SelfCalibration(Winch *winch)
 //}
 
 // 生成自标定模式轨迹数据
-void Generate_SelfCalibration_Trajectory(float current_pos[4], float target_pos[4], float (*trajectory)[61])
+void Generate_SelfCalibration_Trajectory(float current_pos[4], float target_pos[4], float trajectory[][61])
 {
     // 生成从当前位置到目标位置的平滑轨迹
     for(uint16_t i = 0; i < 61; i++)

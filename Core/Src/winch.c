@@ -70,9 +70,10 @@ void Winch_RxCallback(uint8_t *data)
     if((data[0] == 'S') && (data[1] == 'C') && (data[2] == 'M') && (data[3] == 'o') && (data[4] == 'd') && (data[5] == 'e'))
     {
         // 切换到自标定模式
-        winch_instance->mode = Winch_mode_T;
+        winch_instance->mode = Winch_mode_SC;
         winch_instance->sc_current_point = 0;  // 重置标定点索引
         winch_instance->trj_CpltFlag = 0;  // 重置完成标志
+        winch_instance->sc_running = 0;
         for (uint8_t i = 0; i < 4; i++)
         {
             winch_instance->CAN1_M2006[i]->init_pos = winch_instance->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
@@ -126,6 +127,7 @@ void Winch_RxCallback(uint8_t *data)
         {
             // 只有在自标定模式下才处理此命令
             winch_instance->trj = Winch_Trj_SC;
+            winch_instance->sc_running = 1;
             winch_instance->trj_index = 6;
         }
     }
@@ -171,9 +173,10 @@ void Winch_ConstantTorque(Winch *winch)
 {
     // for(uint8_t i = 0; i < 4; i++)
     // {
-    //     winch_motor_output[i] = -100;
+    //     winch_motor_output[i] = 100;
     // }
-    winch_motor_output[0] = 500;
+    winch_motor_output[0] = 300;
+    winch_motor_output[1] = 300;
 }
 
 // 单关节点动模式，速度环
@@ -231,4 +234,6 @@ void Winch_SelfCalibration(Winch *winch)
         PID_Calc(winch->M2006_speed_pid[i]);
         winch_motor_output[i] = winch->M2006_speed_pid[i]->output;
     }
+    // winch_motor_output[1] = 400;
+
 }

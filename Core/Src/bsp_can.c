@@ -22,6 +22,7 @@ uint8_t TxData[8] = {0}; //CAN发送数据
 void CanFilterInit()
 {
     CAN_FilterTypeDef sFilterConfig;
+	
     sFilterConfig.FilterActivation = CAN_FILTER_ENABLE;
     sFilterConfig.FilterBank = 0;
     sFilterConfig.FilterFIFOAssignment = CAN_FILTER_FIFO0;
@@ -33,6 +34,7 @@ void CanFilterInit()
     sFilterConfig.FilterMaskIdHigh = 0x203 << 5;
     sFilterConfig.FilterMaskIdLow = 0x204 << 5;
     sFilterConfig.SlaveStartFilterBank = 14;
+	
     // sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
     // sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
     // sFilterConfig.FilterIdHigh = 0x00;
@@ -40,6 +42,17 @@ void CanFilterInit()
     // sFilterConfig.FilterMaskIdHigh = 0x00;
     // sFilterConfig.FilterMaskIdLow =0x00;
     // sFilterConfig.SlaveStartFilterBank = 14;
+	
+//sFilterConfig.FilterBank = 0;
+//sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
+//sFilterConfig.FilterScale = CAN_FILTERSCALE_32BIT;
+//sFilterConfig.FilterIdHigh = 0x0000;
+//sFilterConfig.FilterIdLow = 0x0000;
+//sFilterConfig.FilterMaskIdHigh = 0x0000;
+//sFilterConfig.FilterMaskIdLow = 0x0000;
+//sFilterConfig.FilterFIFOAssignment = CAN_FilterFIFO0;
+//sFilterConfig.SlaveStartFilterBank = 14;//can1(0-13)和can2(14-27)分别得到一半的filter
+//sFilterConfig.FilterActivation = ENABLE;
 
 
     // 配置CAN1FIFO0过滤器
