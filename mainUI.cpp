@@ -19,15 +19,175 @@ mainUI::mainUI(QWidget *parent)
     poseXLineSeries = new QSplineSeries();
 
     // 初始化自标定模式相关变量
-    scTimer = new QTimer();
+    // scTimer = new QTimer();
     scCurrentCycle = 0;
     scTotalCycles = 10;
-    scIsRunning = false;
+    scIsRunning = false; 
+    
+    // 初始化拖动模式相关变量
+    dragModeActive = false;
+    dragPositionIndex = 0;
+    for(int i = 0; i < 4; i++)
+    {
+        dragPos1[i] = 0.0f;
+        dragPos2[i] = 0.0f;
+    }
+    for(int i = 0; i < 3; i++)
+    {
+        dragPose1[i] = 0.0f;
+        dragPose2[i] = 0.0f;
+    }
+    
+    // 初始化测量初始绳长模式相关变量
+    measureRopeLengthActive = false;
+    for(int i = 0; i < 4; i++)
+    {
+        initialRopeAngle[i] = 0.0f;
+        currentRopeAngle[i] = 0.0f;
+    }
 
     poseXChartInit();
     connect(drawLineTimer, SIGNAL(timeout()), this, SLOT(DrawLine()));
-    connect(scTimer, SIGNAL(timeout()), this, SLOT(scProcessCalibrationData()));
+    // connect(scTimer, SIGNAL(timeout()), this, SLOT(scProcessCalibrationData()));
+
+    // 初始化相机预览控件，将其放置在cameraPage中
+    m_viewfinder = new QCameraViewfinder(ui->cameraPage);
+    m_viewfinder->setGeometry(10, 10, 640, 480);
+    m_viewfinder->setMinimumSize(640, 480);
+
+    // 使用UI设计器中创建的标签控件（假设在设计器中已添加名为photoLabel的QLabel）
+    // 注意：需要在ui文件中确保photoLabel已放置在cameraPage页面中并设置了合适的几何属性
+    m_labelPhoto = ui->photoLabel;
+
+    // 使用现有的UI控件进行信号槽连接
+    connect(ui->shootBtn, &QPushButton::clicked, this, &mainUI::onCaptureImage);
+
+    // 创建临时的打开/关闭按钮（也可以在UI设计器中添加）
+    m_btnOpen = new QPushButton("打开摄像头", ui->cameraPage);
+    m_btnOpen->setGeometry(100, 540, 100, 30);
+    m_btnClose = new QPushButton("关闭摄像头", ui->cameraPage);
+    m_btnClose->setGeometry(250, 540, 100, 30);
+    
+    // 连接打开/关闭摄像头按钮的信号
+    connect(m_btnOpen, &QPushButton::clicked, this, &mainUI::onOpenCamera);
+    connect(m_btnClose, &QPushButton::clicked, this, &mainUI::onCloseCamera);
+
+    // 获取并显示可用摄像头列表
+    cameras = QCameraInfo::availableCameras();
+    for(const QCameraInfo &cameraInfo : cameras)
+    {
+        ui->cameraSel->addItem(cameraInfo.description());
+    }
+    
+    // 摄像头选择变更的连接
+    connect(ui->cameraSel, QOverload<int>::of(&QComboBox::activated),[=](int index){
+        if(m_camera) {
+            m_camera->stop();
+            delete m_camera;
+            m_camera = nullptr;
+            delete m_imageCapture;
+            m_imageCapture = nullptr;
+        }
+        
+        m_camera = new QCamera(cameras[index], this);
+        m_camera->setViewfinder(m_viewfinder);
+        
+        m_imageCapture = new QCameraImageCapture(m_camera, this);
+        connect(m_imageCapture, &QCameraImageCapture::imageCaptured,
+                this, &mainUI::onImageCaptured);
+        
+        m_camera->start();
+        
+        // 更新分辨率选项
+        ui->resolutionSel->clear();
+        QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
+        for(const QSize &size : resSize)
+        {
+            ui->resolutionSel->addItem(QString::number(size.width()) + "*" + QString::number(size.height()));
+        }
+        ui->resolutionSel->setCurrentIndex(0);
+    });
+    
+    // 分辨率选择变更的连接
+    connect(ui->resolutionSel, QOverload<int>::of(&QComboBox::activated), [=](int index){
+        if(!m_camera) return;
+        
+        QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
+        if(index >= 0 && index < resSize.size()) {
+            QCameraViewfinderSettings settings;
+            settings.setResolution(resSize[index]);
+            m_camera->setViewfinderSettings(settings);
+        }
+    });
 }
+
+void mainUI::onOpenCamera()
+{
+    if (m_camera) return; // 已经打开
+
+    // 获取当前选择的摄像头
+    int currentIndex = ui->cameraSel->currentIndex();
+    if(currentIndex >= 0 && currentIndex < cameras.size()) {
+        m_camera = new QCamera(cameras[currentIndex], this);
+    } else if(!cameras.isEmpty()) {
+        // 如果没有选择或索引无效，使用第一个摄像头
+        m_camera = new QCamera(cameras.first(), this);
+        ui->cameraSel->setCurrentIndex(0);
+    } else {
+        qDebug() << "未找到可用摄像头";
+        return;
+    }
+    
+    m_camera->setViewfinder(m_viewfinder);
+
+    m_imageCapture = new QCameraImageCapture(m_camera, this);
+    connect(m_imageCapture, &QCameraImageCapture::imageCaptured,
+            this, &mainUI::onImageCaptured);
+
+    m_camera->start();
+    qDebug() << "摄像头已打开";
+    
+    // 更新分辨率选项
+    ui->resolutionSel->clear();
+    QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
+    for(const QSize &size : resSize)
+    {
+        ui->resolutionSel->addItem(QString::number(size.width()) + "*" + QString::number(size.height()));
+    }
+    ui->resolutionSel->setCurrentIndex(0);
+}
+
+void mainUI::onCaptureImage()
+{
+    if (!m_imageCapture) return;
+
+    QString filename = QString("photo_%1.jpg")
+                           .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
+    m_imageCapture->capture(filename);
+    qDebug() << "已拍照保存到:" << filename;
+}
+
+void mainUI::onCloseCamera()
+{
+    if (m_camera) {
+        m_camera->stop();
+        delete m_camera;
+        m_camera = nullptr;
+
+        delete m_imageCapture;
+        m_imageCapture = nullptr;
+
+        qDebug() << "摄像头已关闭";
+    }
+}
+
+void mainUI::onImageCaptured(int, const QImage &preview)
+{
+    m_labelPhoto->setPixmap(QPixmap::fromImage(preview).scaled(m_labelPhoto->size(),
+                                                               Qt::KeepAspectRatio,
+                                                               Qt::SmoothTransformation));
+}
+
 
 mainUI::~mainUI()
 {
@@ -189,6 +349,7 @@ void mainUI::ReadData()
     }
 
     rxbuff.clear();
+
 }
 
 // 对数据帧进行解析
@@ -387,6 +548,7 @@ void mainUI::on_SModeBtn_pressed()
     ui->modeStackedWidget->setCurrentWidget(ui->SModePage);
     QString TxData = "SMode";
     MySerialPort->write(TxData.toLocal8Bit());
+    measureRopeLengthActive = false;
 }
 
 void mainUI::on_TModeBtn_pressed()
@@ -394,13 +556,15 @@ void mainUI::on_TModeBtn_pressed()
     ui->modeStackedWidget->setCurrentWidget(ui->TModePage);
     QString TxData = "TMode";
     MySerialPort->write(TxData.toLocal8Bit());
+    measureRopeLengthActive = false;
 }
 
-void mainUI::on_RModeBtn_pressed()
+void mainUI::on_DragModeBtn_pressed()
 {
-    ui->modeStackedWidget->setCurrentWidget(ui->RModePage);
-    QString TxData = "RMode";
+    ui->modeStackedWidget->setCurrentWidget(ui->DragModePage);
+    QString TxData = "CTMode";
     MySerialPort->write(TxData.toLocal8Bit());
+    measureRopeLengthActive = false;
 }
 
 void mainUI::on_SCModeBtn_pressed()
@@ -408,6 +572,41 @@ void mainUI::on_SCModeBtn_pressed()
     ui->modeStackedWidget->setCurrentWidget(ui->SCModePage);
     QString TxData = "SCMode";
     MySerialPort->write(TxData.toLocal8Bit());
+    measureRopeLengthActive = false;
+}
+
+// 测量初始绳长模式单选按钮槽函数
+void mainUI::on_MeasureRopeModeBtn_pressed()
+{
+    if(!MySerialPort->isOpen())
+    {
+        QMessageBox::warning(this, "警告", "请先打开串口！");
+        return;
+    }
+    
+    if(scIsRunning || dragModeActive)
+    {
+        QMessageBox::warning(this, "警告", "其他模式正在运行中，无法进入测量初始绳长模式！");
+        return;
+    }
+    
+    if(measureRopeLengthActive)
+    {
+        QMessageBox::information(this, "提示", "测量初始绳长模式已经激活！");
+        return;
+    }
+    
+    // 激活测量初始绳长模式
+    measureRopeLengthActive = true;
+    
+    // 更新UI状态
+    ui->modeStackedWidget->setCurrentWidget(ui->MeasureRopeModePage);
+    
+    QByteArray TxData;
+    TxData = "CTMode";  // 切换到恒力矩模式，便于手动拖动
+    MySerialPort->write(TxData);
+    
+    // QMessageBox::information(this, "提示", "测量初始绳长模式已激活！现在可以控制各电机收绳并记录位置。");
 }
 
 // 自由抽绳
@@ -758,45 +957,163 @@ void mainUI::on_scStartBtn_clicked()
 
     if(scIsRunning)
     {
-        QMessageBox::information(this, "提示", "标定正在进行中，请先停止当前标定！");
+        QMessageBox::information(this, "提示", "标定已经开始，请使用记录位置按钮进行标定！");
         return;
     }
 
-    // 获取用户设置的循环次数
-    scTotalCycles = ui->scCyclesSpinBox->value();
+    // 从UI读取总循环次数
+    if(ui->scCyclesSpinBox)
+    {
+        scTotalCycles = ui->scCyclesSpinBox->value();
+    }
+
+    // 初始化标定状态
     scCurrentCycle = 0;
     scIsRunning = true;
 
     // 更新UI状态
-    ui->scStatusLabel->setText("标定中...");
+    ui->scStatusLabel->setText("标定准备就绪");
     ui->scCurrentLabel->setText(QString::number(scCurrentCycle));
     ui->scStartBtn->setEnabled(false);
     ui->scStopBtn->setEnabled(true);
+    
+    // 启用下一步按钮（假设UI中已有此按钮）
+    if(ui->scNextStepBtn)
+        ui->scNextStepBtn->setEnabled(true);
+            // 启用记录位置按钮
+    if(ui->scRecordPosBtn)
+        ui->scRecordPosBtn->setEnabled(true);
+        
+    QMessageBox::information(this, "提示", QString("标定已准备就绪，共设置 %1 次循环，请调整到目标位置后点击'记录位置'按钮开始标定流程").arg(scTotalCycles));
+}
 
-    // 发送第一个标定指令
+// 下一步标定按钮处理函数
+void mainUI::on_scNextStepBtn_clicked()
+{
+    if(!scIsRunning)
+    {
+        QMessageBox::warning(this, "警告", "请先点击开始标定按钮！");
+        return;
+    }
+    
+    // 检查是否已达到循环次数上限
+    if(scCurrentCycle >= scTotalCycles)
+    {
+        QMessageBox::information(this, "提示", QString("已达到设置的循环次数上限（%1 次），请点击'停止标定'结束标定流程").arg(scTotalCycles));
+        // 禁用下一步按钮
+        if(ui->scNextStepBtn)
+            ui->scNextStepBtn->setEnabled(false);
+        // 更新状态显示
+        ui->scStatusLabel->setText("标定完成，已达到上限");
+        return;
+    }
+    
+    // 禁用下一步按钮，防止重复点击
+    if(ui->scNextStepBtn)
+        ui->scNextStepBtn->setEnabled(false);
+    
+    // 更新状态显示
+    ui->scStatusLabel->setText(QString("执行标定步骤... (%1/%2)").arg(scCurrentCycle + 1).arg(scTotalCycles));
+    
+    // 发送标定指令
     QByteArray TxData;
     TxData = "#Tscmode";
     MySerialPort->write(TxData);
 
     // 启动定时器，等待位置到达后处理数据
-    scTimer->start(6000); // 2秒后处理数据
+    // scTimer->start(6000); // 等待6秒让机器人完成轨迹并稳定
 }
 
 void mainUI::on_scStopBtn_clicked()
 {
     scIsRunning = false;
-    scTimer->stop();
+    // scTimer->stop();
 
     // 更新UI状态
     ui->scStatusLabel->setText("已停止");
     ui->scStartBtn->setEnabled(true);
     ui->scStopBtn->setEnabled(false);
+    
+    // 禁用下一步按钮和记录位置按钮
+    if(ui->scNextStepBtn)
+        ui->scNextStepBtn->setEnabled(false);
+    if(ui->scRecordPosBtn)
+        ui->scRecordPosBtn->setEnabled(false);
 
     // 发送停止指令
     QByteArray TxData;
-    TxData = "#SCSTOP";
+    TxData = "#Tstop";
     MySerialPort->write(TxData);
+    
+    QMessageBox::information(this, "提示", QString("标定已停止！共完成 %1 次标定").arg(scCurrentCycle));
 }
+
+// 手动记录自标定角度位置的按钮处理函数
+void mainUI::on_scRecordPosBtn_clicked()
+{
+    if(!scIsRunning)
+    {
+        QMessageBox::warning(this, "警告", "请先点击开始标定按钮！");
+        return;
+    }
+    
+    // 检查是否已达到循环次数上限
+    if(scCurrentCycle >= scTotalCycles)
+    {
+        QMessageBox::information(this, "提示", QString("已达到设置的循环次数上限（%1 次），请点击'停止标定'结束标定流程").arg(scTotalCycles));
+        // 禁用记录位置按钮
+        if(ui->scRecordPosBtn)
+            ui->scRecordPosBtn->setEnabled(false);
+        // 更新状态显示
+        ui->scStatusLabel->setText("标定完成，已达到上限");
+        return;
+    }
+
+    if(ui->scNextStepBtn)
+        ui->scNextStepBtn->setEnabled(true);
+    // 启用记录位置按钮
+    
+    // 记录当前角度位置信息
+    QDateTime currentTime = QDateTime::currentDateTime();
+    QString currentTimeStr = currentTime.toString(Qt::ISODate);
+    
+    QString dataStr = QString("%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11")
+            .arg(scCurrentCycle + 1)
+            .arg(angleStr[0])
+            .arg(angleStr[1])
+            .arg(angleStr[2])
+            .arg(angleStr[3])
+            .arg(bodyPoseStr[0])
+            .arg(bodyPoseStr[1])
+            .arg(bodyPoseStr[2])
+            .arg(velocityPoseStr[0])
+            .arg(velocityPoseStr[1])
+            .arg(velocityPoseStr[2]);
+
+    scCalibrationData.append(dataStr);
+    scCurrentCycle++;
+
+    // 更新UI显示
+    ui->scCurrentLabel->setText(QString::number(scCurrentCycle));
+    
+    // 检查是否已达到循环次数上限
+    if(scCurrentCycle >= scTotalCycles)
+    {
+        ui->scStatusLabel->setText(QString("标定完成，已达到上限 (%1/%2)").arg(scCurrentCycle).arg(scTotalCycles));
+        // 禁用记录位置按钮
+        if(ui->scRecordPosBtn)
+            ui->scRecordPosBtn->setEnabled(false);
+        if(ui->scNextStepBtn)
+            ui->scNextStepBtn->setEnabled(false);
+        QMessageBox::information(this, "提示", QString("第 %1 次标定完成！已达到设置的循环次数上限（%2 次），标定流程结束").arg(scCurrentCycle).arg(scTotalCycles));
+    }
+    else
+    {
+        ui->scStatusLabel->setText(QString("标定步骤完成，等待记录下一个位置 (%1/%2)").arg(scCurrentCycle).arg(scTotalCycles));
+        QMessageBox::information(this, "提示", QString("第 %1 次标定完成！可以继续调整位置后点击'记录位置'，或点击'停止标定'结束 (剩余 %2 次)").arg(scCurrentCycle).arg(scTotalCycles - scCurrentCycle));
+    }
+}
+
 
 void mainUI::on_scSaveDataBtn_clicked()
 {
@@ -851,58 +1168,577 @@ void mainUI::on_scClearDataBtn_clicked()
     }
 }
 
-void mainUI::scProcessCalibrationData()
-{
-    if(!scIsRunning)
-    {
-        scTimer->stop();
-        return;
-    }
-
-    // 停止定时器
-    scTimer->stop();
-
-    // 记录当前角度位置信息
-    QDateTime currentTime = QDateTime::currentDateTime();
-    QString currentTimeStr = currentTime.toString(Qt::ISODate);
+// void mainUI::scProcessCalibrationData()
+// {
+//     // 现在这个函数不再用于记录数据，因为我们使用手动按钮来记录
+//     // 仅保留基本的定时器停止逻辑，以防定时器仍被意外触发
+//     if(scTimer->isActive())
+//     {
+//         scTimer->stop();
+//     }
     
-    QString dataStr = QString("%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11")
-            .arg(scCurrentCycle + 1)
-            .arg(angleStr[0])
-            .arg(angleStr[1])
-            .arg(angleStr[2])
-            .arg(angleStr[3])
-            .arg(bodyPoseStr[0])
-            .arg(bodyPoseStr[1])
-            .arg(bodyPoseStr[2])
-            .arg(velocityPoseStr[0])
-            .arg(velocityPoseStr[1])
-            .arg(velocityPoseStr[2]);
+//     // 如果定时器被意外触发，可以提示用户使用手动记录按钮
+//     if(scIsRunning)
+//     {
+//         QMessageBox::information(this, "提示", "请使用'记录位置'按钮来手动记录标定数据！");
+//     }
+// }
 
-    scCalibrationData.append(dataStr);
-    scCurrentCycle++;
-
-    // 更新UI显示
-    ui->scCurrentLabel->setText(QString::number(scCurrentCycle));
-
-    // 检查是否完成所有循环
-    if(scCurrentCycle >= scTotalCycles)
+// 拖动模式相关函数实现
+void mainUI::on_dragModeStartBtn_pressed()
+{
+    if(!MySerialPort->isOpen())
     {
-        // 标定完成
-        scIsRunning = false;
-        ui->scStatusLabel->setText("标定完成");
-        ui->scStartBtn->setEnabled(true);
-        ui->scStopBtn->setEnabled(false);
+        QMessageBox::warning(this, "警告", "请先打开串口！");
+        return;
+    }
+    
+    if(scIsRunning)
+    {
+        QMessageBox::warning(this, "警告", "标定正在进行中，无法进入拖动模式！");
+        return;
+    }
+    
+    // if(dragModeActive)
+    // {
+    //     QMessageBox::information(this, "提示", "拖动模式已经激活！");
+    //     return;
+    // }
+    
+    // 激活拖动模式
+    dragModeActive = true;
+    dragPositionIndex = 0;
+    
+    // 发送恒力矩模式指令，让电机进入拖动模式
+    QByteArray TxData;
+    TxData = "#CT5";  // 发送LF电机收绳指令（假设2对应LF电机）
+    MySerialPort->write(TxData);
+    
+    // 更新UI状态
+    if(ui->dragModeStartBtn)
+        ui->dragModeStartBtn->setEnabled(false);
+    if(ui->dragModeStopBtn)
+        ui->dragModeStopBtn->setEnabled(true);
+    if(ui->dragRecordPos1Btn)
+        ui->dragRecordPos1Btn->setEnabled(true);
+    if(ui->dragRecordPos2Btn)
+        ui->dragRecordPos2Btn->setEnabled(true);
+    
+    // QMessageBox::information(this, "提示", "拖动模式已激活！现在可以手动拖动机器人。\n请拖动机器人到第一个位置后，点击'记录位置1'按钮。");
+}
+
+
+void mainUI::on_dragModeStopBtn_clicked()
+{
+    if(!dragModeActive)
+    {
+        QMessageBox::information(this, "提示", "拖动模式未激活！");
+        return;
+    }
+    
+    // 退出拖动模式
+    dragModeActive = false;
+    
+    // 发送停止指令
+    QByteArray TxData;
+    TxData = "SMode";  // 发送停止指令
+    MySerialPort->write(TxData);
+    
+    // 更新UI状态
+    if(ui->dragModeStartBtn)
+        ui->dragModeStartBtn->setEnabled(true);
+    if(ui->dragModeStopBtn)
+        ui->dragModeStopBtn->setEnabled(false);
+    if(ui->dragRecordPos1Btn)
+        ui->dragRecordPos1Btn->setEnabled(false);
+    if(ui->dragRecordPos2Btn)
+        ui->dragRecordPos2Btn->setEnabled(false);
+    
+    QMessageBox::information(this, "提示", "拖动模式已退出！");
+}
+
+void mainUI::on_dragRecordPos1Btn_clicked()
+{
+    if(!dragModeActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活拖动模式！");
+        return;
+    }
+    
+    // 记录当前位置到位置1
+    for(int i = 0; i < 4; i++)
+    {
+        dragPos1[i] = angle[i];  // 使用当前读取到的角度值
+    }
+    for(int i = 0; i < 3; i++)
+    {
+        dragPose1[i] = bodyPose[i];  // 使用当前读取到的姿态值
+    }
+    
+    // 更新UI显示（如果有显示控件）
+    if(ui->dragPos1Label)
+    {
+        QString posStr = QString("位置1 - 电机角度: [%1, %2, %3, %4] | 姿态: [%5, %6, %7]")
+            .arg(dragPos1[0], 0, 'f', 3)
+            .arg(dragPos1[1], 0, 'f', 3)
+            .arg(dragPos1[2], 0, 'f', 3)
+            .arg(dragPos1[3], 0, 'f', 3)
+            .arg(dragPose1[0], 0, 'f', 3)
+            .arg(dragPose1[1], 0, 'f', 3)
+            .arg(dragPose1[2], 0, 'f', 3);
+        ui->dragPos1Label->setText(posStr);
+    }
+    
+    QMessageBox::information(this, "提示", 
+        QString("位置1已记录！\n电机角度: [%1, %2, %3, %4]\n姿态: [%5, %6, %7]\n\n请拖动机器人到第二个位置后，点击'记录位置2'按钮。")
+        .arg(dragPos1[0], 0, 'f', 3)
+        .arg(dragPos1[1], 0, 'f', 3)
+        .arg(dragPos1[2], 0, 'f', 3)
+        .arg(dragPos1[3], 0, 'f', 3)
+        .arg(dragPose1[0], 0, 'f', 3)
+        .arg(dragPose1[1], 0, 'f', 3)
+        .arg(dragPose1[2], 0, 'f', 3));
+}
+
+void mainUI::on_dragRecordPos2Btn_clicked()
+{
+    if(!dragModeActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活拖动模式！");
+        return;
+    }
+    
+    // 记录当前位置到位置2
+    for(int i = 0; i < 4; i++)
+    {
+        dragPos2[i] = angle[i];  // 使用当前读取到的角度值
+    }
+    for(int i = 0; i < 3; i++)
+    {
+        dragPose2[i] = bodyPose[i];  // 使用当前读取到的姿态值
+    }
+    
+    // 更新UI显示（如果有显示控件）
+    if(ui->dragPos2Label)
+    {
+        QString posStr = QString("位置2 - 电机角度: [%1, %2, %3, %4] | 姿态: [%5, %6, %7]")
+            .arg(dragPos2[0], 0, 'f', 3)
+            .arg(dragPos2[1], 0, 'f', 3)
+            .arg(dragPos2[2], 0, 'f', 3)
+            .arg(dragPos2[3], 0, 'f', 3)
+            .arg(dragPose2[0], 0, 'f', 3)
+            .arg(dragPose2[1], 0, 'f', 3)
+            .arg(dragPose2[2], 0, 'f', 3);
+        ui->dragPos2Label->setText(posStr);
+    }
+    
+    QMessageBox::information(this, "提示", 
+        QString("位置2已记录！\n电机角度: [%1, %2, %3, %4]\n姿态: [%5, %6, %7]\n\n两个位置均已记录完成！可以退出拖动模式或继续使用。")
+        .arg(dragPos2[0], 0, 'f', 3)
+        .arg(dragPos2[1], 0, 'f', 3)
+        .arg(dragPos2[2], 0, 'f', 3)
+        .arg(dragPos2[3], 0, 'f', 3)
+        .arg(dragPose2[0], 0, 'f', 3)
+        .arg(dragPose2[1], 0, 'f', 3)
+        .arg(dragPose2[2], 0, 'f', 3));
+}
+
+void mainUI::on_dragClearBtn_clicked()
+{
+    if(dragModeActive)
+    {
+        QMessageBox::warning(this, "警告", "拖动模式正在运行中，无法清空位置记录！\n请先退出拖动模式。");
+        return;
+    }
+    
+    int ret = QMessageBox::question(this, "确认", "确定要清空所有拖动位置记录吗？", 
+                                   QMessageBox::Yes | QMessageBox::No);
+    if(ret == QMessageBox::Yes)
+    {
+        // 清空位置记录
+        for(int i = 0; i < 4; i++)
+        {
+            dragPos1[i] = 0.0f;
+            dragPos2[i] = 0.0f;
+        }
+        for(int i = 0; i < 3; i++)
+        {
+            dragPose1[i] = 0.0f;
+            dragPose2[i] = 0.0f;
+        }
         
-        QMessageBox::information(this, "提示", QString("标定完成！共完成 %1 次循环").arg(scTotalCycles));
+        // 更新UI显示
+        if(ui->dragPos1Label)
+            ui->dragPos1Label->setText("位置1: 未记录");
+        if(ui->dragPos2Label)
+            ui->dragPos2Label->setText("位置2: 未记录");
+        
+        QMessageBox::information(this, "提示", "拖动位置记录已清空");
+    }
+}
+
+// 保存拖动模式记录的位置到CSV文件
+void mainUI::on_dragSaveDataBtn_clicked()
+{
+    if(!dragModeActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活拖动模式并记录位置！");
         return;
     }
 
-    // 继续下一个循环
-    QByteArray TxData;
-    TxData = "#Tscmode";
-    MySerialPort->write(TxData);
+    // 检查是否有数据可以保存
+    bool hasData = false;
+    for(int i = 0; i < 4; i++)
+    {
+        if(dragPos1[i] != 0.0f || dragPos2[i] != 0.0f)
+        {
+            hasData = true;
+            break;
+        }
+    }
 
-    // 重新启动定时器
-    scTimer->start(6000); // 2秒后处理下一个位置的数据
+    if(!hasData)
+    {
+        QMessageBox::warning(this, "警告", "没有可保存的数据！请先记录位置。");
+        return;
+    }
+
+    // 获取保存路径
+    QString fileName = QFileDialog::getSaveFileName(this, tr("保存位置数据"), ".", tr("CSV Files (*.csv);;All Files (*)"));
+    if(fileName.isEmpty())
+        return;
+
+    // 创建文件
+    QFile file(fileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this, "警告", "无法创建文件！");
+        return;
+    }
+
+    // 写入数据
+    QTextStream out(&file);
+    // 写入表头
+    out << "position,angleRF,angleLF,angleLB,angleRB,bodyPoseX,bodyPoseY,bodyPoseZ" << Qt::endl;
+
+    // 写入位置1数据
+    out << "pos1," << dragPos1[0] << "," << dragPos1[1] << "," << dragPos1[2] << "," << dragPos1[3] << ","
+        << dragPose1[0] << "," << dragPose1[1] << "," << dragPose1[2] << Qt::endl;
+    
+    // 写入位置2数据
+    out << "pos2," << dragPos2[0] << "," << dragPos2[1] << "," << dragPos2[2] << "," << dragPos2[3] << ","
+        << dragPose2[0] << "," << dragPose2[1] << "," << dragPose2[2] << Qt::endl;
+
+    // 关闭文件
+    file.close();
+
+    QMessageBox::information(this, "提示", "位置数据已成功保存！");
+}
+
+// 测量初始绳长模式相关函数实现
+// void mainUI::on_measureRopeLengthBtn_pressed()
+// {
+//     if(!MySerialPort->isOpen())
+//     {
+//         QMessageBox::warning(this, "警告", "请先打开串口！");
+//         return;
+//     }
+    
+//     if(scIsRunning || dragModeActive)
+//     {
+//         QMessageBox::warning(this, "警告", "其他模式正在运行中，无法进入测量初始绳长模式！");
+//         return;
+//     }
+    
+//     if(measureRopeLengthActive)
+//     {
+//         QMessageBox::information(this, "提示", "测量初始绳长模式已经激活！");
+//         return;
+//     }
+    
+//     // 激活测量初始绳长模式
+//     measureRopeLengthActive = true;
+    
+//     // 更新UI状态
+//     ui->modeStackedWidget->setCurrentWidget(ui->MeasureRopeModePage);
+
+//     QByteArray TxData;
+//     TxData = "CTMode";  // 切换到恒力矩模式，便于手动拖动
+//     MySerialPort->write(TxData);
+    
+//     QMessageBox::information(this, "提示", "测量初始绳长模式已激活！现在可以控制各电机收绳并记录位置。");
+// }
+
+void mainUI::on_measureRopeLengthStopBtn_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::information(this, "提示", "测量初始绳长模式未激活！");
+        return;
+    }
+    
+    // 发送停止指令
+    QByteArray TxData;
+    TxData = "#CT0";  // 发送停止指令
+    MySerialPort->write(TxData);
+    
+    QMessageBox::information(this, "提示", "测量初始绳长模式已退出！");
+}
+
+// 电机收绳按钮实现
+void mainUI::on_tightRopeBtn_Measure_RF_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 发送RF电机收绳指令
+    QByteArray TxData;
+    TxData = "#CT1";  // 发送RF电机收绳指令（假设1对应RF电机）
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_tightRopeBtn_Measure_LF_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 发送LF电机收绳指令
+    QByteArray TxData;
+    TxData = "#CT2";  // 发送LF电机收绳指令（假设2对应LF电机）
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_tightRopeBtn_Measure_LB_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 发送LB电机收绳指令
+    QByteArray TxData;
+    TxData = "#CT3";  // 发送LB电机收绳指令（假设3对应LB电机）
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_tightRopeBtn_Measure_RB_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 发送RB电机收绳指令
+    QByteArray TxData;
+    TxData = "#CT4";  // 发送RB电机收绳指令（假设4对应RB电机）
+    MySerialPort->write(TxData);
+}
+
+// 记录初始位置按钮实现
+void mainUI::on_recordInitialBtn_RF_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前RF电机角度作为初始位置
+    initialRopeAngle[0] = angle[0];
+    
+    // 更新UI显示
+    ui->initialAngleLabel_RF->setText(QString("初始角度: %1").arg(initialRopeAngle[0], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("RF电机初始位置已记录！角度值: %1").arg(initialRopeAngle[0], 0, 'f', 3));
+}
+
+void mainUI::on_recordInitialBtn_LF_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前LF电机角度作为初始位置
+    initialRopeAngle[1] = angle[1];
+    
+    // 更新UI显示
+    ui->initialAngleLabel_LF->setText(QString("初始角度: %1").arg(initialRopeAngle[1], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("LF电机初始位置已记录！角度值: %1").arg(initialRopeAngle[1], 0, 'f', 3));
+}
+
+void mainUI::on_recordInitialBtn_LB_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前LB电机角度作为初始位置
+    initialRopeAngle[2] = angle[2];
+    
+    // 更新UI显示
+    ui->initialAngleLabel_LB->setText(QString("初始角度: %1").arg(initialRopeAngle[2], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("LB电机初始位置已记录！角度值: %1").arg(initialRopeAngle[2], 0, 'f', 3));
+}
+
+void mainUI::on_recordInitialBtn_RB_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前RB电机角度作为初始位置
+    initialRopeAngle[3] = angle[3];
+    
+    // 更新UI显示
+    ui->initialAngleLabel_RB->setText(QString("初始角度: %1").arg(initialRopeAngle[3], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("RB电机初始位置已记录！角度值: %1").arg(initialRopeAngle[3], 0, 'f', 3));
+}
+
+// 记录当前位置按钮实现
+void mainUI::on_recordCurrentBtn_RF_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前RF电机角度作为当前位置
+
+    float temp = angle[0];
+    currentRopeAngle[0] = temp;
+    
+    // 更新UI显示
+    ui->currentAngleLabel_RF->setText(QString("现在角度: %1").arg(currentRopeAngle[0], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("RF电机当前位置已记录！角度值: %1").arg(currentRopeAngle[0], 0, 'f', 3));
+}
+
+void mainUI::on_recordCurrentBtn_LF_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前LF电机角度作为当前位置
+    float temp = angle[1];
+    currentRopeAngle[1] = temp;
+    
+    // 更新UI显示
+    ui->currentAngleLabel_LF->setText(QString("现在角度: %1").arg(currentRopeAngle[1], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("LF电机当前位置已记录！角度值: %1").arg(currentRopeAngle[1], 0, 'f', 3));
+}
+
+void mainUI::on_recordCurrentBtn_LB_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前LB电机角度作为当前位置
+    float temp = angle[2];
+    currentRopeAngle[2] = temp;
+    
+    // 更新UI显示
+    ui->currentAngleLabel_LB->setText(QString("现在角度: %1").arg(currentRopeAngle[2], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("LB电机当前位置已记录！角度值: %1").arg(currentRopeAngle[2], 0, 'f', 3));
+}
+
+void mainUI::on_recordCurrentBtn_RB_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量初始绳长模式！");
+        return;
+    }
+    
+    // 记录当前RB电机角度作为当前位置
+    float temp = angle[3];
+    currentRopeAngle[3] = temp;
+    
+    // 更新UI显示
+    ui->currentAngleLabel_RB->setText(QString("现在角度: %1").arg(currentRopeAngle[3], 0, 'f', 3));
+    
+    QMessageBox::information(this, "提示", QString("RB电机当前位置已记录！角度值: %1").arg(currentRopeAngle[3], 0, 'f', 3));
+}
+
+void mainUI::on_exportDataBtn_clicked()
+{
+    if(!measureRopeLengthActive)
+    {
+        QMessageBox::warning(this, "警告", "请先激活测量绳长模式并记录位置！");
+        return;
+    }
+
+    // 检查是否有数据可以保存
+    bool hasData = false;
+    for(int i = 0; i < 4; i++)
+    {
+        if(initialRopeAngle[i] != 0.0f || currentRopeAngle[i] != 0.0f)
+        {
+            hasData = true;
+            break;
+        }
+    }
+
+    if(!hasData)
+    {
+        QMessageBox::warning(this, "警告", "没有可保存的数据！请先记录位置。");
+        return;
+    }
+
+    // 获取保存路径
+    QString fileName = QFileDialog::getSaveFileName(this, tr("保存位置数据"), ".", tr("CSV Files (*.csv);;All Files (*)"));
+    if(fileName.isEmpty())
+        return;
+
+    // 创建文件
+    QFile file(fileName);
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QMessageBox::warning(this, "警告", "无法创建文件！");
+        return;
+    }
+
+    // 写入数据
+    QTextStream out(&file);
+    // 写入表头
+    out << "angleRF_init," << "angleLF_init," << "angleLB_init," << "angleRB_init,"<< Qt::endl;
+
+    // 写入位置1数据
+    out << initialRopeAngle[0] << "," << initialRopeAngle[1] << "," << initialRopeAngle[2] << "," << initialRopeAngle[3] << Qt::endl;
+
+    out << "angleRF_curr," << "angleLF_curr,"<< "angleLB_curr," << "angleRB_curr," << Qt::endl;
+
+    // 写入位置2数据
+    out << currentRopeAngle[0] << "," << currentRopeAngle[1] << "," << currentRopeAngle[2] << "," << currentRopeAngle[3] << Qt::endl;
+
+    // 关闭文件
+    file.close();
+
+    QMessageBox::information(this, "提示", "位置数据已成功保存！");
+
 }

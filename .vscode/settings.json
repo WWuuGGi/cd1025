@@ -3,6 +3,9 @@
     "files.associations": {
         "compare": "c",
         "random": "c",
-        "cstdint": "c"
+        "cstdint": "c",
+        "trajectory.h": "c",
+        "atomic": "c",
+        "winch.h": "c"
     }
 }

@@ -30,26 +30,28 @@ Winch *Winch_Create()
 void Winch_SetPID(Winch *winch)
 {
     PID_Set(winch->M2006_speed_pid[0], 1, 0, 5, 0, 16384, PID_POSITION);
-    PID_Set(winch->M2006_position_pid[0], 120, 2, 15, 2000, 16384, PID_POSITION);
+    PID_Set(winch->M2006_position_pid[0], 120, 2, 20, 2000, 16384, PID_POSITION);
+	// 120 2 15 2000 16384
 
     PID_Set(winch->M2006_speed_pid[1], 1, 0, 5, 0, 16384, PID_POSITION);
-    PID_Set(winch->M2006_position_pid[1], 120, 2, 15, 2000, 16384, PID_POSITION);
+    PID_Set(winch->M2006_position_pid[1], 120, 2, 20, 2000, 16384, PID_POSITION);
 
     PID_Set(winch->M2006_speed_pid[2], 1, 0, 5, 0, 16384, PID_POSITION);
-    PID_Set(winch->M2006_position_pid[2], 120, 2, 15, 2000, 16384, PID_POSITION);
+    PID_Set(winch->M2006_position_pid[2], 120, 2, 20, 2000, 16384, PID_POSITION);
 
     PID_Set(winch->M2006_speed_pid[3], 1, 0, 5, 0, 16384, PID_POSITION);
-    PID_Set(winch->M2006_position_pid[3], 120, 2, 15, 2000, 16384, PID_POSITION);
+    PID_Set(winch->M2006_position_pid[3], 120, 2, 20, 2000, 16384, PID_POSITION);
 }
 
 void Winch_RxCallback(uint8_t *data)
 {
-    if((data[0] == 'P') && (data[1] == 'o') && (data[2] == 's') && (data[3] = 'e'))
+    if((data[0] == 'P') && (data[1] == 'o') && (data[2] == 's') && (data[3] == 'e'))
         winch_instance->pose_ZeroFlag = 1;
 
     if((data[0] == 'C') &&(data[1] == 'T') && (data[2] == 'M') && (data[3] == 'o') && (data[4] == 'd') && (data[5] == 'e'))
     {
         winch_instance->mode = Winch_mode_CT;
+        winch_instance->ct_flag = 0;
     }
 
     if((data[0] == 'S') && (data[1] == 'M') && (data[2] == 'o') && (data[3] == 'd') && (data[4] == 'e'))
@@ -74,6 +76,7 @@ void Winch_RxCallback(uint8_t *data)
         winch_instance->sc_current_point = 0;  // 重置标定点索引
         winch_instance->trj_CpltFlag = 0;  // 重置完成标志
         winch_instance->sc_running = 0;
+        winch_instance->sc_timer = 0;
         for (uint8_t i = 0; i < 4; i++)
         {
             winch_instance->CAN1_M2006[i]->init_pos = winch_instance->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
@@ -128,8 +131,38 @@ void Winch_RxCallback(uint8_t *data)
             // 只有在自标定模式下才处理此命令
             winch_instance->trj = Winch_Trj_SC;
             winch_instance->sc_running = 1;
+            winch_instance->sc_timer = 0;
             winch_instance->trj_index = 6;
         }
+    }
+    //测量实际绳长的相关控制分类
+    if((data[0] == '#') && (data[1] == 'C') && (data[2] == 'T'))
+    {
+        if(data[3] == '1')
+        {
+            winch_instance->ct_flag = 1;
+        }
+        else if(data[3] == '2')
+        {
+            winch_instance->ct_flag = 2;
+        }
+        else if(data[3] == '3')
+        {
+            winch_instance->ct_flag = 3;
+        }
+        else if(data[3] == '4')
+        {
+            winch_instance->ct_flag = 4;
+        }
+        else if(data[3] == '5')
+        {
+            winch_instance->ct_flag = 5;
+        }
+        else if(data[3] == '0')
+        {
+            winch_instance->ct_flag = 0;
+        }
+        
     }
 
     if((data[0] == 'G') && (data[1] == 'r') && (data[2] == 'a') && (data[3] == 'b'))
@@ -171,12 +204,53 @@ void Winch_Calc_Output(Winch *winch)
 //恒定力矩模式，用于初始抽绳
 void Winch_ConstantTorque(Winch *winch)
 {
-    // for(uint8_t i = 0; i < 4; i++)
-    // {
-    //     winch_motor_output[i] = 100;
-    // }
-    winch_motor_output[0] = 300;
-    winch_motor_output[1] = 300;
+    switch(winch->ct_flag)
+    {
+        //正负有待确认调整
+        case 0:
+            winch_motor_output[0] = 0;
+            winch_motor_output[1] = 0;
+            winch_motor_output[2] = 0;
+            winch_motor_output[3] = 0;
+            break;
+        case 1:
+            winch_motor_output[0] = 500;
+            winch_motor_output[1] = 0;
+            winch_motor_output[2] = 0;
+            winch_motor_output[3] = 0;
+            break;
+        case 2:
+            winch_motor_output[0] = 0;
+            winch_motor_output[1] = 500;
+            winch_motor_output[2] = 0;
+            winch_motor_output[3] = 0;
+            break;
+        case 3:
+            winch_motor_output[0] = 0;
+            winch_motor_output[1] = 0;
+            winch_motor_output[2] = 500;
+            winch_motor_output[3] = 0;
+            break;
+        case 4:
+            winch_motor_output[0] = 0;
+            winch_motor_output[1] = 0;
+            winch_motor_output[2] = 0;
+            winch_motor_output[3] = 500;
+            break;
+        case 5:
+            winch_motor_output[0] = 500;
+            winch_motor_output[1] = 500;
+            winch_motor_output[2] = 500;
+            winch_motor_output[3] = 500;
+            break;
+        default:
+            winch_motor_output[0] = 0;
+            winch_motor_output[1] = 0;
+            winch_motor_output[2] = 0;
+            winch_motor_output[3] = 0;
+            break;
+
+    }
 }
 
 // 单关节点动模式，速度环
@@ -223,6 +297,7 @@ void Winch_Pose_SetZero()
 // 自标定模式处理函数 - 修复逻辑
 void Winch_SelfCalibration(Winch *winch)
 {
+    uint8_t fc_rope = 3;
     // 位置环+速度环控制
     for(uint8_t i = 0; i < 4; i++)
     {
@@ -233,7 +308,50 @@ void Winch_SelfCalibration(Winch *winch)
         winch->M2006_speed_pid[i]->fdb = winch->CAN1_M2006[i]->fdbSpeed;
         PID_Calc(winch->M2006_speed_pid[i]);
         winch_motor_output[i] = winch->M2006_speed_pid[i]->output;
-    }
-    // winch_motor_output[1] = 400;
+        //先全部置零，实验先大电流后小电流的执行效果
 
+    }
+    winch_motor_output[0] = 0;
+    winch_motor_output[1] = 0;
+    winch_motor_output[2] = 0;
+    
+    // 初始化自标定相关参数（仅在首次进入模式时）
+    if(winch->sc_running && winch->sc_timer == 0)
+    {
+        winch->sc_timer = HAL_GetTick(); // 记录开始时间
+        winch->sc_current_stage = 0; // 初始为大电流阶段
+        winch->sc_high_current = 500; // 设置大电流值（可根据实际需求调整）
+        winch->sc_low_current = 180;   // 设置小电流值（可根据实际需求调整）
+    }
+    
+    // 检查是否需要切换电流阶段（假设大电流阶段持续1000ms）
+    if(winch->sc_running && winch->sc_current_stage == 0 && (HAL_GetTick() - winch->sc_timer) > 1000)
+    {
+        winch->sc_current_stage = 1; // 切换到小电流阶段
+    }
+    
+    // 力控逻辑：根据当前阶段设置电流值
+    if(winch->sc_running)
+    {
+        int16_t current_value;
+        
+        // 根据当前阶段选择电流值
+        if(winch->sc_current_stage == 0)
+        {
+            current_value = winch->sc_high_current; // 大电流克服静摩擦力
+        }
+        else
+        {
+            current_value = winch->sc_low_current;  // 小电流维持张紧状态
+        }
+        
+            winch_motor_output[fc_rope] = current_value;
+    }
+    else
+    {
+        // 如果自标定模式未运行，重置计时器
+        winch->sc_timer = 0;
+        winch->sc_current_stage = 0;
+    }
+  
 }

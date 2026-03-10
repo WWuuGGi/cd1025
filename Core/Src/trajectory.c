@@ -44,6 +44,7 @@ void StartTrj(Winch *winch)
     }
 }
 
+
 void Winch_Stop(Winch *winch)
 {
     //若从其他轨迹切回停止状态，重新获取初始位置
@@ -72,7 +73,7 @@ void Winch_Start_Rise(Winch *winch)
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
 
-        Winch_Run_Step(winch, 81, 0.1, winch_rise_angle, winch_rise_pose);
+        Winch_Run_Step(winch, 61, 0.1, winch_rise_angle, winch_rise_pose);
 
         winch->trj_CpltFlag = 1;
         winch->trj_index = 0;
@@ -367,10 +368,10 @@ void Winch_Start_SelfCalibration(Winch *winch)
 				
         // 执行轨迹
         //Winch_Run_Step(winch, 61, 0.1, trajectory, ref_pose);
-        Winch_Run_Step(winch,  61, 0.1, sc_angles[winch->sc_current_point], sc_poses[winch->sc_current_point]);
+        Winch_Run_Step(winch,  61, 0.1, sc_angles_4[winch->sc_current_point], sc_4_poses[winch->sc_current_point]);
 
         //更新sc_current_point到下一个标定点
-        if(winch->sc_current_point < 3)
+        if(winch->sc_current_point < 50)
         {
             winch->sc_current_point++;  // 移动到下一个标定点
         }
@@ -442,27 +443,3 @@ void Winch_Start_SelfCalibration(Winch *winch)
 //        }
 //    }
 //}
-
-// 生成自标定模式轨迹数据
-void Generate_SelfCalibration_Trajectory(float current_pos[4], float target_pos[4], float trajectory[][61])
-{
-    // 生成从当前位置到目标位置的平滑轨迹
-    for(uint16_t i = 0; i < 61; i++)
-    {
-        float t = (float)i / 60.0f; // 归一化时间 [0,1]
-        
-        // 使用五次多项式插值生成平滑轨迹
-        float t2 = t * t;
-        float t3 = t2 * t;
-        float t4 = t3 * t;
-        float t5 = t4 * t;
-        
-        // 五次多项式系数：h(t) = 6t^5 - 15t^4 + 10t^3
-        float h = 6.0f * t5 - 15.0f * t4 + 10.0f * t3;
-        
-        for(uint8_t j = 0; j < 4; j++)
-        {
-            trajectory[j][i] = current_pos[j] + h * (target_pos[j] - current_pos[j]);
-        }
-    }
-}

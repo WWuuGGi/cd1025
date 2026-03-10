@@ -117,7 +117,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>70</y>
+       <y>40</y>
        <width>141</width>
        <height>31</height>
       </rect>
@@ -130,7 +130,7 @@
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>110</y>
+       <y>80</y>
        <width>141</width>
        <height>31</height>
       </rect>
@@ -139,17 +139,17 @@
       <string>轨迹规划模式</string>
      </property>
     </widget>
-    <widget class="QRadioButton" name="RModeBtn">
+    <widget class="QRadioButton" name="DragModeBtn">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>150</y>
+       <y>120</y>
        <width>141</width>
        <height>31</height>
       </rect>
      </property>
      <property name="text">
-      <string>遥控模式</string>
+      <string>拖动模式</string>
      </property>
     </widget>
     <widget class="QStackedWidget" name="modeStackedWidget">
@@ -158,12 +158,365 @@
        <x>50</x>
        <y>230</y>
        <width>291</width>
-       <height>481</height>
+       <height>461</height>
       </rect>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>4</number>
      </property>
+     <widget class="QWidget" name="MeasureRopeModePage">
+      <widget class="QLabel" name="measureRopeTitleLabel">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>10</y>
+         <width>121</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>测量初始绳长模式</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_Measure_RF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>30</y>
+         <width>72</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>电机#RF</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="tightRopeBtn_Measure_RF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>50</y>
+         <width>60</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>收绳</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordInitialBtn_RF">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>50</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录初始位置</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordCurrentBtn_RF">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>50</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录现在位置</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="initialAngleLabel_RF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>80</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>初始角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentAngleLabel_RF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>100</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>现在角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_Measure_LF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>130</y>
+         <width>72</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>电机#LF</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="tightRopeBtn_Measure_LF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>150</y>
+         <width>60</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>收绳</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordInitialBtn_LF">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>150</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录初始位置</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordCurrentBtn_LF">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>150</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录现在位置</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="initialAngleLabel_LF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>180</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>初始角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentAngleLabel_LF">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>200</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>现在角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_Measure_LB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>230</y>
+         <width>72</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>电机#LB</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="tightRopeBtn_Measure_LB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>250</y>
+         <width>60</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>收绳</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordInitialBtn_LB">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>250</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录初始位置</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordCurrentBtn_LB">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>250</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录现在位置</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="initialAngleLabel_LB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>280</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>初始角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentAngleLabel_LB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>300</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>现在角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_Measure_RB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>330</y>
+         <width>72</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>电机#RB</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="tightRopeBtn_Measure_RB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>350</y>
+         <width>60</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>收绳</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordInitialBtn_RB">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>350</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录初始位置</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="recordCurrentBtn_RB">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>350</y>
+         <width>80</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录现在位置</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="initialAngleLabel_RB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>380</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>初始角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="currentAngleLabel_RB">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>400</y>
+         <width>240</width>
+         <height>15</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>现在角度: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="measureRopeLengthStopBtn">
+       <property name="geometry">
+        <rect>
+         <x>160</x>
+         <y>420</y>
+         <width>120</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>停止运行</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="exportDataBtn">
+       <property name="geometry">
+        <rect>
+         <x>30</x>
+         <y>420</y>
+         <width>111</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>导出数据</string>
+       </property>
+      </widget>
+     </widget>
      <widget class="QWidget" name="SModePage">
       <widget class="QLabel" name="label_3">
        <property name="geometry">
@@ -499,7 +852,7 @@
          <x>90</x>
          <y>30</y>
          <width>101</width>
-         <height>20</height>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
@@ -624,7 +977,7 @@
        </property>
       </widget>
      </widget>
-     <widget class="QWidget" name="RModePage">
+     <widget class="QWidget" name="DragModePage">
       <widget class="QLabel" name="label_13">
        <property name="geometry">
         <rect>
@@ -635,7 +988,120 @@
         </rect>
        </property>
        <property name="text">
-        <string>遥控模式</string>
+        <string>拖动模式</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="dragPos2Label">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>190</y>
+         <width>251</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>位置2: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="dragRecordPos1Btn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>22</x>
+         <y>120</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录位置1</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="dragModeStopBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>152</x>
+         <y>80</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>退出拖动模式</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="dragModeStartBtn">
+       <property name="geometry">
+        <rect>
+         <x>22</x>
+         <y>80</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>进入拖动模式</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="dragSaveDataBtn">
+       <property name="geometry">
+        <rect>
+         <x>190</x>
+         <y>230</y>
+         <width>93</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>保存数据</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="dragRecordPos2Btn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>152</x>
+         <y>120</y>
+         <width>121</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>记录位置2</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="dragPos1Label">
+       <property name="geometry">
+        <rect>
+         <x>20</x>
+         <y>160</y>
+         <width>261</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>位置1: 未记录</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="dragClearBtn">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>230</y>
+         <width>151</width>
+         <height>28</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>清空拖动记录</string>
        </property>
       </widget>
      </widget>
@@ -753,23 +1219,39 @@
       <widget class="QLabel" name="scStatusLabel">
        <property name="geometry">
         <rect>
-         <x>100</x>
-         <y>210</y>
-         <width>100</width>
-         <height>15</height>
+         <x>80</x>
+         <y>200</y>
+         <width>181</width>
+         <height>51</height>
         </rect>
        </property>
        <property name="text">
         <string>待机</string>
        </property>
       </widget>
+      <widget class="QPushButton" name="scNextStepBtn">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>370</y>
+         <width>191</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>下一步标定</string>
+       </property>
+      </widget>
       <widget class="QPushButton" name="scSaveDataBtn">
        <property name="geometry">
         <rect>
-         <x>80</x>
-         <y>250</y>
-         <width>93</width>
-         <height>28</height>
+         <x>90</x>
+         <y>330</y>
+         <width>91</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
@@ -780,13 +1262,26 @@
        <property name="geometry">
         <rect>
          <x>190</x>
-         <y>250</y>
-         <width>71</width>
-         <height>28</height>
+         <y>330</y>
+         <width>91</width>
+         <height>31</height>
         </rect>
        </property>
        <property name="text">
         <string>清空数据</string>
+       </property>
+      </widget>
+      <widget class="QPushButton" name="scRecordPosBtn">
+       <property name="geometry">
+        <rect>
+         <x>90</x>
+         <y>290</y>
+         <width>191</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>手动记录</string>
        </property>
       </widget>
      </widget>
@@ -794,7 +1289,7 @@
     <widget class="QTabWidget" name="tabWidget">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>350</x>
        <y>40</y>
        <width>800</width>
        <height>900</height>
@@ -1128,24 +1623,118 @@
        </property>
       </widget>
      </widget>
+     <widget class="QWidget" name="cameraPage">
+      <attribute name="title">
+       <string>摄像头</string>
+      </attribute>
+      <widget class="QPushButton" name="shootBtn">
+       <property name="geometry">
+        <rect>
+         <x>200</x>
+         <y>710</y>
+         <width>81</width>
+         <height>31</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>拍照</string>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="cameraSel">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>590</y>
+         <width>321</width>
+         <height>41</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QComboBox" name="resolutionSel">
+       <property name="geometry">
+        <rect>
+         <x>100</x>
+         <y>650</y>
+         <width>321</width>
+         <height>41</height>
+        </rect>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_27">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>600</y>
+         <width>41</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>摄像头</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="label_28">
+       <property name="geometry">
+        <rect>
+         <x>40</x>
+         <y>660</y>
+         <width>31</width>
+         <height>21</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>分辨率</string>
+       </property>
+      </widget>
+      <widget class="QLabel" name="photoLabel">
+       <property name="geometry">
+        <rect>
+         <x>450</x>
+         <y>590</y>
+         <width>200</width>
+         <height>150</height>
+        </rect>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">border: 1px solid gray;</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </widget>
     </widget>
     <widget class="QRadioButton" name="SCModeBtn">
      <property name="geometry">
       <rect>
        <x>70</x>
-       <y>190</y>
+       <y>160</y>
        <width>161</width>
-       <height>16</height>
+       <height>21</height>
       </rect>
      </property>
      <property name="text">
       <string>自标定模式</string>
      </property>
     </widget>
+    <widget class="QRadioButton" name="MeasureRopeModeBtn">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>190</y>
+       <width>161</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>测量初始绳长模式</string>
+     </property>
+    </widget>
     <zorder>tabWidget</zorder>
+    <zorder>MeasureRopeModeBtn</zorder>
     <zorder>SModeBtn</zorder>
     <zorder>TModeBtn</zorder>
-    <zorder>RModeBtn</zorder>
+    <zorder>DragModeBtn</zorder>
     <zorder>modeStackedWidget</zorder>
     <zorder>SCModeBtn</zorder>
    </widget>
