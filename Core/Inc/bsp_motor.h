@@ -10,6 +10,7 @@
 #define CAN1_2006Motor2_ID 0x202
 #define CAN1_2006Motor3_ID 0x203
 #define CAN1_2006Motor4_ID 0x204
+#define CAN1_2006Motor5_ID 0x205
 
 typedef struct CAN_Motor_t
 {

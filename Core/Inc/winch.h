@@ -11,7 +11,8 @@ typedef enum Winch_mode_t
     Winch_mode_CT,          //恒定力矩模式
     Winch_mode_S,           //单关节点动模式
     Winch_mode_T,           //轨迹规划模式
-    Winch_mode_SC           //自标定模式
+    Winch_mode_SC,          //自标定模式
+    Winch_mode_Lift         //升降平台模式
 } Winch_mode;
 
 typedef enum Winch_trj_t
@@ -26,14 +27,16 @@ typedef enum Winch_trj_t
     Winch_Trj_circle,       //圆形轨迹
     Winch_Trj_helix,        //螺旋线轨迹
     Winch_Trj_fall,         //下降轨迹
-    Winch_Trj_SC            //自标定轨迹
+    Winch_Trj_SC,            //自标定轨迹
+    Winch_Trj_up,           //平台上升轨迹
+    Winch_Trj_down          //平台下降轨迹
 } Winch_trj;
 
 typedef struct winch_t
 {
-    CAN_Motor *CAN1_M2006[4];
-    PID *M2006_speed_pid[4];
-    PID *M2006_position_pid[4];
+    CAN_Motor *CAN1_M2006[5];
+    PID *M2006_speed_pid[5];
+    PID *M2006_position_pid[5];
 
     JY901S *pose;           //机器人姿态
     uint8_t pose_ZeroFlag;  //用于姿态角度置零的标志
@@ -57,6 +60,12 @@ typedef struct winch_t
     
     uint8_t ct_flag;        //恒定力矩模式标志
 
+    // 升降平台模式相关变量
+    float lift_ref_pos;      //升降平台目标位置（圈数）
+    float lift_current_pos;  //升降平台当前位置（圈数）
+    uint8_t lift_direction;  //升降方向（0:上升, 1:下降）
+    uint8_t lift_running;    //升降平台运行标志
+
 } Winch;
 
 void Winch_Drvier_Init();
@@ -72,5 +81,8 @@ void Winch_Pose_SetZero();
 
 // 自标定模式相关函数声明
 void Winch_SelfCalibration(Winch *winch);
+
+// 升降平台模式相关函数声明
+void Winch_LiftControl(Winch *winch);
 
 #endif

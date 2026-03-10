@@ -6,6 +6,8 @@
         "cstdint": "c",
         "trajectory.h": "c",
         "atomic": "c",
-        "winch.h": "c"
+        "winch.h": "c",
+        "string.h": "c",
+        "numbers": "c"
     }
 }

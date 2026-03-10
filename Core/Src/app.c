@@ -31,7 +31,7 @@ void APP_WinchTask()
 
 void APP_StartTrj()
 {
-    if(winch->mode == Winch_mode_T || winch->mode == Winch_mode_SC)
+    if(winch->mode == Winch_mode_T || winch->mode == Winch_mode_SC || winch->mode == Winch_mode_Lift)
         StartTrj(winch);
     else
         return;

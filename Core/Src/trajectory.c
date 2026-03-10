@@ -39,6 +39,12 @@ void StartTrj(Winch *winch)
     case Winch_Trj_SC:
         Winch_Start_SelfCalibration(winch);
         break;
+    case Winch_Trj_up:
+        Winch_Start_Up(winch);
+        break;
+    case Winch_Trj_down:
+        Winch_Start_Down(winch);
+        break;
     default:
         break;
     }
@@ -50,13 +56,13 @@ void Winch_Stop(Winch *winch)
     //若从其他轨迹切回停止状态，重新获取初始位置
     if(winch->last_trj != Winch_Trj_stop)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
     }
 
-    for (uint8_t i = 0; i < 4; i++)
+    for (uint8_t i = 0; i < 5; i++)
     {
         winch->CAN1_M2006[i]->ref_pos = winch->CAN1_M2006[i]->init_pos;
     }
@@ -68,7 +74,7 @@ void Winch_Start_Rise(Winch *winch)
 {
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -88,7 +94,7 @@ void Winch_Start_Line(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -110,7 +116,7 @@ void Winch_Start_Line1(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -131,7 +137,7 @@ void Winch_Start_Line2(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -151,7 +157,7 @@ void Winch_Start_Line3(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -171,7 +177,7 @@ void Winch_Start_Circle1(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -191,7 +197,7 @@ void Winch_Start_Circle2(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -211,7 +217,7 @@ void Winch_Start_Circle3(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -231,7 +237,7 @@ void Winch_Start_Swim1(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -251,7 +257,7 @@ void Winch_Start_Swim2(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -272,7 +278,7 @@ void Winch_Start_Swim3(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -292,7 +298,7 @@ void Winch_Start_Poly(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -317,7 +323,7 @@ void Winch_Start_Fall(Winch *winch)
     
     if(winch->trj_CpltFlag == 0)
     {
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -343,6 +349,7 @@ void Winch_Run_Step(Winch *winch, uint16_t t_num, float time_step, float (*motor
         {
             winch->CAN1_M2006[j]->ref_pos = -motor_angle[j][i] + winch->CAN1_M2006[j]->init_pos;
         }
+        winch->CAN1_M2006[4]->ref_pos = winch->CAN1_M2006[4]->init_pos;
 
             winch->poseX_ref = pose_ref[0][i];
             winch->poseY_ref = pose_ref[1][i];
@@ -350,7 +357,31 @@ void Winch_Run_Step(Winch *winch, uint16_t t_num, float time_step, float (*motor
         vTaskDelay(time_step * 1000 / portTICK_RATE_MS);
         
     }
+
 }
+
+void Winch_Run_Step_Lift(Winch *winch, uint16_t t_num, float time_step, float motor_angle[t_num], float (*pose_ref)[t_num])
+{
+    for(uint16_t i =1; i < t_num; i++)
+    {
+        if (winch->trj == Winch_Trj_stop)
+        {
+            break;
+        }
+        for (uint8_t j = 0; j < 4; j++)
+        {
+            winch->CAN1_M2006[j]->ref_pos = 0.0 + winch->CAN1_M2006[j]->init_pos;
+        }
+
+        winch->CAN1_M2006[4]->ref_pos = -motor_angle[i] + winch->CAN1_M2006[4]->init_pos;
+
+        winch->poseX_ref = pose_ref[0][i];
+        winch->poseY_ref = pose_ref[1][i];
+        
+        vTaskDelay(time_step * 1000 / portTICK_RATE_MS);
+        
+    }
+    }
 
 // 自标定模式启动函数 - 补全sc_current_point更新逻辑
 void Winch_Start_SelfCalibration(Winch *winch)
@@ -361,7 +392,7 @@ void Winch_Start_SelfCalibration(Winch *winch)
     if(winch->trj_CpltFlag == 0)
     {
 
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -385,6 +416,40 @@ void Winch_Start_SelfCalibration(Winch *winch)
         winch->trj_index = 0;
         winch->last_trj = Winch_Trj_SC;
         winch->sc_running = 0;
+    }
+}
+
+void Winch_Start_Up(Winch *winch)
+{
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 5; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step_Lift(winch, 61, 0.1, winch_lift_angle, winch_lift_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_up;
+    }
+}
+
+void Winch_Start_Down(Winch *winch)
+{
+    if(winch->trj_CpltFlag == 0)
+    {
+        for (uint8_t i = 0; i < 5; i++)
+        {
+            winch->CAN1_M2006[i]->init_pos = winch->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
+        }
+
+        Winch_Run_Step_Lift(winch, 61, 0.1, winch_lift_angle, winch_lift_pose);
+
+        winch->trj_CpltFlag = 1;
+        winch->trj_index = 0;
+        winch->last_trj = Winch_Trj_down;
     }
 }
 
