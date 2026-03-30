@@ -1,0 +1,55 @@
+#ifndef __WHEEL_H__
+#define __WHEEL_H__
+
+#include "bsp_imu.h"
+#include "bsp_nidec.h"
+#include "JY901S.h"
+
+// 动量轮电机引脚
+// #define Motor_A_Dir_Pin GPIO_PIN_0
+// #define Motor_A_Dir_GPIO_Port GPIOI
+// #define Motor_B_Dir_Pin GPIO_PIN_14
+// #define Motor_B_Dir_GPIO_Port GPIOD
+// #define Motor_C_Dir_Pin GPIO_PIN_15
+// #define Motor_C_Dir_GPIO_Port GPIOD
+// #define Motor_D_Dir_Pin GPIO_PIN_2
+// #define Motor_D_Dir_GPIO_Port GPIOA
+#define Motor_Enable_Pin GPIO_PIN_3
+#define Motor_Enable_GPIO_Port GPIOA
+#define PWM_MAX 8399 // 最大PWM值
+
+// 动量轮模组模式
+typedef enum Wheel_mode_e
+{
+    WHEEL_MODE_STOP = 0, // 动量轮模组停止
+    WHEEL_MODE_ENABLED   // 动量轮模组启用
+} Wheel_mode;
+
+typedef struct Wheel_Typedef_t
+{
+    //IMU_Data_Typedef *imu;         // 机器人实时姿态信息
+    JY901S *imu;                  // 机器人实时姿态信息
+    Nidec_Typedef *wheel_motor[4]; // 动量轮模组
+    Wheel_mode wheel_mode;         // 动量轮模组模式
+    uint8_t imu_ZeroFlag;          // IMU重置标志
+    float qd[4];                   // 机器人期望四元数
+    float euler_d[3];              // 机器人期望欧拉角
+    float accd[3];                 // 机器人规划加速度, 用于姿态稳定控制中计算非线性项
+    float tau[4];                  // 动量轮期望转矩
+    uint16_t pwm[4];                  // 动量轮控制PWM
+    uint8_t dir[4];                // 动量轮方向
+
+    float E_back;
+    float IR;
+    float U_need;
+} Wheel_Typedef;
+
+Wheel_Typedef *Wheel_Create(void);
+void Wheel_Set_Qd(void);
+void Stable_Control(void);
+void Wheel_Set_PWM(float tau[4]);
+void Wheel_RxCallback(uint8_t *data);
+void Wheel_Test(void);
+void Wheel_Run_Tau(void);
+
+#endif

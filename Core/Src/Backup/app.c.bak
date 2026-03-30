@@ -2,7 +2,7 @@
 
 
 Winch *winch;
-uint8_t upload_data[43];
+uint8_t upload_data[47];
 uint8_t pose_data[8];
 
 // 调试变量（已注释，需要时取消注释）
@@ -31,7 +31,7 @@ void APP_WinchTask()
 
 void APP_StartTrj()
 {
-    if(winch->mode == Winch_mode_T || winch->mode == Winch_mode_SC)
+    if(winch->mode == Winch_mode_T || winch->mode == Winch_mode_SC || winch->mode == Winch_mode_Lift)
         StartTrj(winch);
     else
         return;
@@ -79,23 +79,30 @@ void APP_UploadData()
     upload_data[28] = (((int32_t)(winch->CAN1_M2006[3]->now_pos * 1000.0f)) & 0x00FF0000) >> 16;
     upload_data[29] = ((int32_t)(winch->CAN1_M2006[3]->now_pos * 1000.0f)) >> 24;
 
+    upload_data[30] = ((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) & 0x000000FF;
+    upload_data[31] = (((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[32] = (((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[33] = ((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) >> 24;
+
     //姿态角速度
-    upload_data[30] = ((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x000000FF;
-    upload_data[31] = (((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[32] = (((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[33] = ((int32_t)(winch->pose->velocityX * 1000.0f)) >> 24;
+    upload_data[34] = ((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x000000FF;
+    upload_data[35] = (((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[36] = (((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[37] = ((int32_t)(winch->pose->velocityX * 1000.0f)) >> 24;
 
-    upload_data[34] = ((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x000000FF;
-    upload_data[35] = (((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[36] = (((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[37] = ((int32_t)(winch->pose->velocityY * 1000.0f)) >> 24;
+    upload_data[38] = ((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x000000FF;   
+    upload_data[39] = (((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[40] = (((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[41] = ((int32_t)(winch->pose->velocityY * 1000.0f)) >> 24;
 
-    upload_data[38] = ((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x000000FF;
-    upload_data[39] = (((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[40] = (((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[41] = ((int32_t)(winch->pose->velocityZ * 1000.0f)) >> 24;
+    upload_data[42] = ((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x000000FF;
+    upload_data[43] = (((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[44] = (((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[45] = ((int32_t)(winch->pose->velocityZ * 1000.0f)) >> 24;
 
-    upload_data[42] = winch->trj_index;
+    upload_data[46] = winch->trj_index;
+
+
 
     // 调试代码（已注释，需要时取消注释）
     // 第4路：使用原始编码器 + 圈数跟踪（与 data_process 一致）

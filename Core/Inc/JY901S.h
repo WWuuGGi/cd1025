@@ -5,12 +5,15 @@
 
 typedef struct JY901S_t
 {
-    float angleX;
-    float angleY;
-    float angleZ;
-    float velocityX;
-    float velocityY;
-    float velocityZ;
+    // float angleX;
+    // float angleY;
+    // float angleZ;
+    // float velocityX;
+    // float velocityY;
+    // float velocityZ;
+    float q[4];
+    float euler[3];
+    float omega[3];
 } JY901S;
 
 void JY901S_Init();

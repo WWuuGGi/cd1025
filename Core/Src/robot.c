@@ -1,0 +1,37 @@
+#include "robot.h"
+#include "string.h"
+#include "stdlib.h"
+
+static Robot_TypeDef *robot_instance = NULL;
+
+Robot_TypeDef *Robot_Create(void)
+{
+    Robot_TypeDef *robot = (Robot_TypeDef *)malloc(sizeof(Robot_TypeDef));
+    if (robot == NULL)
+        return NULL;
+    memset(robot, 0, sizeof(Robot_TypeDef));
+
+    robot->wheel = Wheel_Create();
+    robot->winch = Winch_Create();
+
+    robot_instance = robot;
+    return robot;
+}
+
+// 更新机器人实时姿态信息
+void Robot_IMU_Update(IMU_Data_Typedef *imu_data)
+{
+    memcpy(robot_instance->wheel->imu, imu_data, sizeof(IMU_Data_Typedef));
+}
+
+void Robot_RxCallback(uint8_t *data)
+{
+    if ((data[0] == 0x55) && (data[1] == 0x01))
+    {
+        Wheel_RxCallback(data);
+    }
+    else if ((data[0] == 0x55) && (data[1] == 0x02))
+    {
+        Winch_RxCallback(data);
+    }
+}

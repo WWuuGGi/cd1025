@@ -60,11 +60,6 @@ typedef struct winch_t
     
     uint8_t ct_flag;        //恒定力矩模式标志
 
-    // 升降平台模式相关变量
-    float lift_ref_pos;      //升降平台目标位置（圈数）
-    float lift_current_pos;  //升降平台当前位置（圈数）
-    uint8_t lift_direction;  //升降方向（0:上升, 1:下降）
-    uint8_t lift_running;    //升降平台运行标志
 
 } Winch;
 

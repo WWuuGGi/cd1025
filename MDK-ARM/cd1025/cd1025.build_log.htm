@@ -22,13 +22,13 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 E:\cable\cd0310\cd0310\MDK-ARM\cd1025.uvprojx
-Project File Date:  03/10/2026
+Project File Date:  03/11/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\keil5\ARM\ARMCC\Bin'
 Rebuild target 'cd1025'
+Note: source file '../Core/Src/dma.c' - object file renamed from 'cd1025\dma.o' to 'cd1025\dma_1.o'.
 Note: source file '../Core/Src/system_stm32f4xx.c' - object file renamed from 'cd1025\system_stm32f4xx.o' to 'cd1025\system_stm32f4xx_1.o'.
-assembling startup_stm32f427xx.s...
 compiling pid.c...
 ../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
   PID *PID_Create();
@@ -37,243 +37,8 @@ compiling pid.c...
 ..\Core\Src\pid.c(45): warning:  #1-D: last line of file ends without a newline
   }
 ..\Core\Src\pid.c: 3 warnings, 0 errors
-compiling bsp_can.c...
-../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
-  void CanFilterInit();
-../Core/Inc/bsp_can.h(9): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\bsp_can.c(120): warning:  #1-D: last line of file ends without a newline
-   }
-..\Core\Src\bsp_can.c: 3 warnings, 0 errors
-compiling bsp.c...
-../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
-  void CanFilterInit();
-../Core/Inc/bsp_can.h(9): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/mytype.h(42): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_imu.h(78): warning:  #1295-D: Deprecated declaration imu_init - give arg types
-  void imu_init();
-../Core/Inc/bsp_imu.h(79): warning:  #1295-D: Deprecated declaration imu_update - give arg types
-  void imu_update();
-../Core/Inc/bsp_imu.h(81): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
-  void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
-  void BSP_UART_Init();
-../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp.h(9): warning:  #1295-D: Deprecated declaration BSP_Layer_Init - give arg types
-  void BSP_Layer_Init();
-../Core/Inc/bsp.h(11): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\bsp.c(9): warning:  #1-D: last line of file ends without a newline
-  }
-..\Core\Src\bsp.c: 13 warnings, 0 errors
-compiling winch.c...
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
-  void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
-  PID *PID_Create();
-../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
-  void BSP_UART_Init();
-../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
-  void JY901S_Init();
-../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
-  JY901S* JY901S_Create();
-../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
-  void JY901S_AccCali();
-../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
-  void JY901S_SetZero();
-../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/winch.h(62): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
-  void Winch_Drvier_Init();
-../Core/Inc/winch.h(63): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
-  Winch *Winch_Create();
-../Core/Inc/winch.h(70): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
-  void Winch_Send_Current();
-../Core/Inc/winch.h(71): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
-  void Winch_Pose_SetZero();
-../Core/Inc/winch.h(76): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/gripper.h(4): warning:  #1295-D: Deprecated declaration Gripper_grab - give arg types
-  void Gripper_grab();
-../Core/Inc/gripper.h(5): warning:  #1295-D: Deprecated declaration Gripper_loose - give arg types
-  void Gripper_loose();
-../Core/Inc/gripper.h(7): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
-  void CanFilterInit();
-../Core/Inc/bsp_can.h(9): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\winch.c(357): warning:  #1-D: last line of file ends without a newline
-  }
-..\Core\Src\winch.c: 22 warnings, 0 errors
-compiling main.c...
-../Core/Inc/hal.h(4): warning:  #1295-D: Deprecated declaration HAL_Layer_Init - give arg types
-  void HAL_Layer_Init();
-../Core/Inc/hal.h(6): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
-  void CanFilterInit();
-../Core/Inc/bsp_can.h(9): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/mytype.h(42): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_imu.h(78): warning:  #1295-D: Deprecated declaration imu_init - give arg types
-  void imu_init();
-../Core/Inc/bsp_imu.h(79): warning:  #1295-D: Deprecated declaration imu_update - give arg types
-  void imu_update();
-../Core/Inc/bsp_imu.h(81): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
-  void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
-  void BSP_UART_Init();
-../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp.h(9): warning:  #1295-D: Deprecated declaration BSP_Layer_Init - give arg types
-  void BSP_Layer_Init();
-../Core/Inc/bsp.h(11): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
-  PID *PID_Create();
-../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
-  void JY901S_Init();
-../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
-  JY901S* JY901S_Create();
-../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
-  void JY901S_AccCali();
-../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
-  void JY901S_SetZero();
-../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/winch.h(62): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
-  void Winch_Drvier_Init();
-../Core/Inc/winch.h(63): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
-  Winch *Winch_Create();
-../Core/Inc/winch.h(70): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
-  void Winch_Send_Current();
-../Core/Inc/winch.h(71): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
-  void Winch_Pose_SetZero();
-../Core/Inc/winch.h(76): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/trajectory.h(28): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/app.h(7): warning:  #1295-D: Deprecated declaration APP_Layer_Init - give arg types
-  void APP_Layer_Init();
-../Core/Inc/app.h(8): warning:  #1295-D: Deprecated declaration APP_WinchTask - give arg types
-  void APP_WinchTask();
-../Core/Inc/app.h(9): warning:  #1295-D: Deprecated declaration APP_StartTrj - give arg types
-  void APP_StartTrj();
-../Core/Inc/app.h(10): warning:  #1295-D: Deprecated declaration APP_UploadData - give arg types
-  void APP_UploadData();
-../Core/Inc/app.h(11): warning:  #1295-D: Deprecated declaration APP_SendPose - give arg types
-  void APP_SendPose();
-../Core/Inc/app.h(13): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Src/main.c: 33 warnings, 0 errors
-compiling dma.c...
-compiling app.c...
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
-  void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
-  PID *PID_Create();
-../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
-  void BSP_UART_Init();
-../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
-  void JY901S_Init();
-../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
-  JY901S* JY901S_Create();
-../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
-  void JY901S_AccCali();
-../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
-  void JY901S_SetZero();
-../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/winch.h(62): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
-  void Winch_Drvier_Init();
-../Core/Inc/winch.h(63): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
-  Winch *Winch_Create();
-../Core/Inc/winch.h(70): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
-  void Winch_Send_Current();
-../Core/Inc/winch.h(71): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
-  void Winch_Pose_SetZero();
-../Core/Inc/winch.h(76): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/trajectory.h(28): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/app.h(7): warning:  #1295-D: Deprecated declaration APP_Layer_Init - give arg types
-  void APP_Layer_Init();
-../Core/Inc/app.h(8): warning:  #1295-D: Deprecated declaration APP_WinchTask - give arg types
-  void APP_WinchTask();
-../Core/Inc/app.h(9): warning:  #1295-D: Deprecated declaration APP_StartTrj - give arg types
-  void APP_StartTrj();
-../Core/Inc/app.h(10): warning:  #1295-D: Deprecated declaration APP_UploadData - give arg types
-  void APP_UploadData();
-../Core/Inc/app.h(11): warning:  #1295-D: Deprecated declaration APP_SendPose - give arg types
-  void APP_SendPose();
-../Core/Inc/app.h(13): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\app.c(144): warning:  #1-D: last line of file ends without a newline
-  }
-..\Core\Src\app.c: 24 warnings, 0 errors
-compiling bsp_uart.c...
-../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
-  void BSP_UART_Init();
-../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
-  void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
-  PID *PID_Create();
-../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
-  void JY901S_Init();
-../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
-  JY901S* JY901S_Create();
-../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
-  void JY901S_AccCali();
-../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
-  void JY901S_SetZero();
-../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/winch.h(62): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
-  void Winch_Drvier_Init();
-../Core/Inc/winch.h(63): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
-  Winch *Winch_Create();
-../Core/Inc/winch.h(70): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
-  void Winch_Send_Current();
-../Core/Inc/winch.h(71): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
-  void Winch_Pose_SetZero();
-../Core/Inc/winch.h(76): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\bsp_uart.c(69): warning:  #1-D: last line of file ends without a newline
-  }
-..\Core\Src\bsp_uart.c: 17 warnings, 0 errors
+assembling startup_stm32f427xx.s...
+compiling can.c...
 compiling hal.c...
 ../Core/Inc/hal.h(4): warning:  #1295-D: Deprecated declaration HAL_Layer_Init - give arg types
   void HAL_Layer_Init();
@@ -296,8 +61,11 @@ compiling hal.c...
 ..\Core\Src\hal.c(9): warning:  #1-D: last line of file ends without a newline
   }
 ..\Core\Src\hal.c: 10 warnings, 0 errors
-compiling can.c...
-compiling bsp_imu.c...
+compiling bsp.c...
+../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
+  void CanFilterInit();
+../Core/Inc/bsp_can.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
 ../Core/Inc/mytype.h(42): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Inc/bsp_imu.h(78): warning:  #1295-D: Deprecated declaration imu_init - give arg types
@@ -306,53 +74,21 @@ compiling bsp_imu.c...
   void imu_update();
 ../Core/Inc/bsp_imu.h(81): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/ist8310_reg.h(27): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/mpu6500_reg.h(111): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\bsp_imu.c(704): warning:  #1-D: last line of file ends without a newline
-  }
-..\Core\Src\bsp_imu.c: 7 warnings, 0 errors
-compiling trajectory.c...
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
   void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
-  PID *PID_Create();
-../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
   void BSP_UART_Init();
 ../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
-  void JY901S_Init();
-../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
-  JY901S* JY901S_Create();
-../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
-  void JY901S_AccCali();
-../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
-  void JY901S_SetZero();
-../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/bsp.h(9): warning:  #1295-D: Deprecated declaration BSP_Layer_Init - give arg types
+  void BSP_Layer_Init();
+../Core/Inc/bsp.h(11): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/winch.h(62): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
-  void Winch_Drvier_Init();
-../Core/Inc/winch.h(63): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
-  Winch *Winch_Create();
-../Core/Inc/winch.h(70): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
-  void Winch_Send_Current();
-../Core/Inc/winch.h(71): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
-  void Winch_Pose_SetZero();
-../Core/Inc/winch.h(76): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/trajectory.h(28): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/trj_plan.h(676): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/pose_plan.h(474): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\trajectory.c: 19 warnings, 0 errors
+..\Core\Src\bsp.c(9): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\bsp.c: 13 warnings, 0 errors
 compiling JY901S.c...
 ../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
   void BSP_UART_Init();
@@ -371,19 +107,7 @@ compiling JY901S.c...
 ..\Core\Src\JY901S.c(74): warning:  #1-D: last line of file ends without a newline
   }
 ..\Core\Src\JY901S.c: 8 warnings, 0 errors
-compiling gpio.c...
-compiling bsp_motor.c...
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
-  void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
-  void CanFilterInit();
-../Core/Inc/bsp_can.h(9): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\bsp_motor.c(93): warning:  #1-D: last line of file ends without a newline
-  }
-..\Core\Src\bsp_motor.c: 5 warnings, 0 errors
+compiling dma.c...
 compiling gripper.c...
 ../Core/Inc/gripper.h(4): warning:  #1295-D: Deprecated declaration Gripper_grab - give arg types
   void Gripper_grab();
@@ -394,7 +118,15 @@ compiling gripper.c...
 ..\Core\Src\gripper.c(12): warning:  #1-D: last line of file ends without a newline
   }
 ..\Core\Src\gripper.c: 4 warnings, 0 errors
-compiling freertos.c...
+compiling bsp_can.c...
+../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
+  void CanFilterInit();
+../Core/Inc/bsp_can.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\bsp_can.c(148): warning:  #1-D: last line of file ends without a newline
+   }
+..\Core\Src\bsp_can.c: 3 warnings, 0 errors
+compiling bsp_imu.c...
 ../Core/Inc/mytype.h(42): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Inc/bsp_imu.h(78): warning:  #1295-D: Deprecated declaration imu_init - give arg types
@@ -403,9 +135,53 @@ compiling freertos.c...
   void imu_update();
 ../Core/Inc/bsp_imu.h(81): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/bsp_motor.h(29): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+../Core/Inc/ist8310_reg.h(27): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/mpu6500_reg.h(111): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\bsp_imu.c(704): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\bsp_imu.c: 7 warnings, 0 errors
+compiling bsp_uart.c...
+../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
+  void BSP_UART_Init();
+../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
   void CAN1_Motor_Driver_Init();
-../Core/Inc/bsp_motor.h(32): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
+  PID *PID_Create();
+../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
+  void JY901S_Init();
+../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
+  JY901S* JY901S_Create();
+../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
+  void JY901S_AccCali();
+../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
+  void JY901S_SetZero();
+../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/winch.h(66): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
+  void Winch_Drvier_Init();
+../Core/Inc/winch.h(67): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
+  Winch *Winch_Create();
+../Core/Inc/winch.h(74): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
+  void Winch_Send_Current();
+../Core/Inc/winch.h(75): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
+  void Winch_Pose_SetZero();
+../Core/Inc/winch.h(83): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\bsp_uart.c(69): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\bsp_uart.c: 17 warnings, 0 errors
+compiling trajectory.c...
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+  void CAN1_Motor_Driver_Init();
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
   PID *PID_Create();
@@ -425,17 +201,246 @@ compiling freertos.c...
   void JY901S_SetZero();
 ../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/winch.h(62): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
+../Core/Inc/winch.h(66): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
   void Winch_Drvier_Init();
-../Core/Inc/winch.h(63): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
+../Core/Inc/winch.h(67): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
   Winch *Winch_Create();
-../Core/Inc/winch.h(70): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
+../Core/Inc/winch.h(74): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
   void Winch_Send_Current();
-../Core/Inc/winch.h(71): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
+../Core/Inc/winch.h(75): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
   void Winch_Pose_SetZero();
-../Core/Inc/winch.h(76): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/winch.h(83): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/trajectory.h(28): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/trajectory.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/trj_plan.h(732): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/pose_plan.h(513): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\trajectory.c(373): warning:  #1035-D: single-precision operand implicitly converted to double-precision
+              winch->CAN1_M2006[j]->ref_pos = 0.0 + winch->CAN1_M2006[j]->init_pos;
+..\Core\Src\trajectory.c: 20 warnings, 0 errors
+compiling gpio.c...
+compiling winch.c...
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+  void CAN1_Motor_Driver_Init();
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
+  PID *PID_Create();
+../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
+  void BSP_UART_Init();
+../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
+  void JY901S_Init();
+../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
+  JY901S* JY901S_Create();
+../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
+  void JY901S_AccCali();
+../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
+  void JY901S_SetZero();
+../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/winch.h(66): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
+  void Winch_Drvier_Init();
+../Core/Inc/winch.h(67): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
+  Winch *Winch_Create();
+../Core/Inc/winch.h(74): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
+  void Winch_Send_Current();
+../Core/Inc/winch.h(75): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
+  void Winch_Pose_SetZero();
+../Core/Inc/winch.h(83): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/gripper.h(4): warning:  #1295-D: Deprecated declaration Gripper_grab - give arg types
+  void Gripper_grab();
+../Core/Inc/gripper.h(5): warning:  #1295-D: Deprecated declaration Gripper_loose - give arg types
+  void Gripper_loose();
+../Core/Inc/gripper.h(7): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
+  void CanFilterInit();
+../Core/Inc/bsp_can.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\winch.c(362): warning:  #177-D: variable "fc_rope"  was declared but never referenced
+      uint8_t fc_rope = 3;
+..\Core\Src\winch.c(444): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\winch.c: 23 warnings, 0 errors
+compiling app.c...
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+  void CAN1_Motor_Driver_Init();
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
+  PID *PID_Create();
+../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
+  void BSP_UART_Init();
+../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
+  void JY901S_Init();
+../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
+  JY901S* JY901S_Create();
+../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
+  void JY901S_AccCali();
+../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
+  void JY901S_SetZero();
+../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/winch.h(66): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
+  void Winch_Drvier_Init();
+../Core/Inc/winch.h(67): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
+  Winch *Winch_Create();
+../Core/Inc/winch.h(74): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
+  void Winch_Send_Current();
+../Core/Inc/winch.h(75): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
+  void Winch_Pose_SetZero();
+../Core/Inc/winch.h(83): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/trajectory.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/app.h(7): warning:  #1295-D: Deprecated declaration APP_Layer_Init - give arg types
+  void APP_Layer_Init();
+../Core/Inc/app.h(8): warning:  #1295-D: Deprecated declaration APP_WinchTask - give arg types
+  void APP_WinchTask();
+../Core/Inc/app.h(9): warning:  #1295-D: Deprecated declaration APP_StartTrj - give arg types
+  void APP_StartTrj();
+../Core/Inc/app.h(10): warning:  #1295-D: Deprecated declaration APP_UploadData - give arg types
+  void APP_UploadData();
+../Core/Inc/app.h(11): warning:  #1295-D: Deprecated declaration APP_SendPose - give arg types
+  void APP_SendPose();
+../Core/Inc/app.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\app.c(151): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\app.c: 24 warnings, 0 errors
+compiling bsp_motor.c...
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+  void CAN1_Motor_Driver_Init();
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
+  void CanFilterInit();
+../Core/Inc/bsp_can.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\Core\Src\bsp_motor.c(94): warning:  #1-D: last line of file ends without a newline
+  }
+..\Core\Src\bsp_motor.c: 5 warnings, 0 errors
+compiling main.c...
+../Core/Inc/hal.h(4): warning:  #1295-D: Deprecated declaration HAL_Layer_Init - give arg types
+  void HAL_Layer_Init();
+../Core/Inc/hal.h(6): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_can.h(6): warning:  #1295-D: Deprecated declaration CanFilterInit - give arg types
+  void CanFilterInit();
+../Core/Inc/bsp_can.h(10): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/mytype.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_imu.h(78): warning:  #1295-D: Deprecated declaration imu_init - give arg types
+  void imu_init();
+../Core/Inc/bsp_imu.h(79): warning:  #1295-D: Deprecated declaration imu_update - give arg types
+  void imu_update();
+../Core/Inc/bsp_imu.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+  void CAN1_Motor_Driver_Init();
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
+  void BSP_UART_Init();
+../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp.h(9): warning:  #1295-D: Deprecated declaration BSP_Layer_Init - give arg types
+  void BSP_Layer_Init();
+../Core/Inc/bsp.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
+  PID *PID_Create();
+../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
+  void JY901S_Init();
+../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
+  JY901S* JY901S_Create();
+../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
+  void JY901S_AccCali();
+../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
+  void JY901S_SetZero();
+../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/winch.h(66): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
+  void Winch_Drvier_Init();
+../Core/Inc/winch.h(67): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
+  Winch *Winch_Create();
+../Core/Inc/winch.h(74): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
+  void Winch_Send_Current();
+../Core/Inc/winch.h(75): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
+  void Winch_Pose_SetZero();
+../Core/Inc/winch.h(83): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/trajectory.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/app.h(7): warning:  #1295-D: Deprecated declaration APP_Layer_Init - give arg types
+  void APP_Layer_Init();
+../Core/Inc/app.h(8): warning:  #1295-D: Deprecated declaration APP_WinchTask - give arg types
+  void APP_WinchTask();
+../Core/Inc/app.h(9): warning:  #1295-D: Deprecated declaration APP_StartTrj - give arg types
+  void APP_StartTrj();
+../Core/Inc/app.h(10): warning:  #1295-D: Deprecated declaration APP_UploadData - give arg types
+  void APP_UploadData();
+../Core/Inc/app.h(11): warning:  #1295-D: Deprecated declaration APP_SendPose - give arg types
+  void APP_SendPose();
+../Core/Inc/app.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Src/main.c: 33 warnings, 0 errors
+compiling freertos.c...
+../Core/Inc/mytype.h(42): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_imu.h(78): warning:  #1295-D: Deprecated declaration imu_init - give arg types
+  void imu_init();
+../Core/Inc/bsp_imu.h(79): warning:  #1295-D: Deprecated declaration imu_update - give arg types
+  void imu_update();
+../Core/Inc/bsp_imu.h(81): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_motor.h(30): warning:  #1295-D: Deprecated declaration CAN1_Motor_Driver_Init - give arg types
+  void CAN1_Motor_Driver_Init();
+../Core/Inc/bsp_motor.h(33): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/pid.h(25): warning:  #1295-D: Deprecated declaration PID_Create - give arg types
+  PID *PID_Create();
+../Core/Inc/pid.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
+  void BSP_UART_Init();
+../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/JY901S.h(16): warning:  #1295-D: Deprecated declaration JY901S_Init - give arg types
+  void JY901S_Init();
+../Core/Inc/JY901S.h(17): warning:  #1295-D: Deprecated declaration JY901S_Create - give arg types
+  JY901S* JY901S_Create();
+../Core/Inc/JY901S.h(18): warning:  #1295-D: Deprecated declaration JY901S_AccCali - give arg types
+  void JY901S_AccCali();
+../Core/Inc/JY901S.h(19): warning:  #1295-D: Deprecated declaration JY901S_SetZero - give arg types
+  void JY901S_SetZero();
+../Core/Inc/JY901S.h(22): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/winch.h(66): warning:  #1295-D: Deprecated declaration Winch_Drvier_Init - give arg types
+  void Winch_Drvier_Init();
+../Core/Inc/winch.h(67): warning:  #1295-D: Deprecated declaration Winch_Create - give arg types
+  Winch *Winch_Create();
+../Core/Inc/winch.h(74): warning:  #1295-D: Deprecated declaration Winch_Send_Current - give arg types
+  void Winch_Send_Current();
+../Core/Inc/winch.h(75): warning:  #1295-D: Deprecated declaration Winch_Pose_SetZero - give arg types
+  void Winch_Pose_SetZero();
+../Core/Inc/winch.h(83): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/trajectory.h(33): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Inc/app.h(7): warning:  #1295-D: Deprecated declaration APP_Layer_Init - give arg types
   void APP_Layer_Init();
@@ -451,49 +456,49 @@ compiling freertos.c...
   #endif
 ../Core/Src/freertos.c: 27 warnings, 0 errors
 compiling spi.c...
-compiling tim.c...
 compiling usart.c...
-compiling stm32f4xx_hal_dma_ex.c...
-compiling stm32f4xx_hal_flash_ramfunc.c...
-compiling stm32f4xx_hal_flash.c...
-compiling stm32f4xx_hal_flash_ex.c...
-compiling stm32f4xx_hal_msp.c...
-compiling stm32f4xx_hal_rcc.c...
+compiling stm32f4xx_hal_can.c...
+compiling stm32f4xx_hal_gpio.c...
 compiling stm32f4xx_hal_tim_ex.c...
+compiling stm32f4xx_hal_timebase_tim.c...
+compiling stm32f4xx_hal_rcc.c...
+compiling stm32f4xx_hal_flash_ramfunc.c...
 compiling stm32f4xx_it.c...
 ../Core/Inc/bsp_uart.h(20): warning:  #1295-D: Deprecated declaration BSP_UART_Init - give arg types
   void BSP_UART_Init();
 ../Core/Inc/bsp_uart.h(25): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Src/stm32f4xx_it.c: 2 warnings, 0 errors
-compiling stm32f4xx_hal_gpio.c...
+compiling stm32f4xx_hal_msp.c...
+compiling stm32f4xx_hal_flash.c...
 compiling stm32f4xx_hal_rcc_ex.c...
-compiling stm32f4xx_hal_timebase_tim.c...
 compiling croutine.c...
-compiling list.c...
+compiling stm32f4xx_hal_dma_ex.c...
 compiling event_groups.c...
-compiling stm32f4xx_hal_can.c...
+compiling list.c...
+compiling stm32f4xx_hal_tim.c...
+compiling stm32f4xx_hal_flash_ex.c...
+compiling tim.c...
+compiling timers.c...
 compiling queue.c...
 compiling stream_buffer.c...
-compiling tasks.c...
-compiling timers.c...
 compiling heap_4.c...
-compiling stm32f4xx_hal_tim.c...
+compiling tasks.c...
 compiling port.c...
 compiling cmsis_os.c...
-compiling stm32f4xx_hal_dma.c...
-compiling stm32f4xx_hal_pwr_ex.c...
-compiling stm32f4xx_hal_exti.c...
-compiling system_stm32f4xx.c...
 compiling stm32f4xx_hal_pwr.c...
+compiling stm32f4xx_hal_dma.c...
+compiling system_stm32f4xx.c...
+compiling stm32f4xx_hal_pwr_ex.c...
 compiling stm32f4xx_hal_cortex.c...
 compiling stm32f4xx_hal.c...
-compiling stm32f4xx_hal_uart.c...
+compiling stm32f4xx_hal_exti.c...
 compiling stm32f4xx_hal_spi.c...
+compiling stm32f4xx_hal_uart.c...
 linking...
-Program Size: Code=33540 RO-data=992 RW-data=46752 ZI-data=34480  
+Program Size: Code=34308 RO-data=992 RW-data=29540 ZI-data=43172  
 FromELF: creating hex file...
-"cd1025\cd1025.axf" - 0 Error(s), 197 Warning(s).
+"cd1025\cd1025.axf" - 0 Error(s), 199 Warning(s).
 
 <h2>Software Packages used:</h2>
 

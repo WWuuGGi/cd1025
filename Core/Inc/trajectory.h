@@ -18,7 +18,12 @@ void Winch_Start_Swim2(Winch *winch);
 void Winch_Start_Swim3(Winch *winch);
 void Winch_Start_Poly(Winch *winch);
 void Winch_Start_Fall(Winch *winch);
+
+void Winch_Start_Up(Winch *winch);
+void Winch_Start_Down(Winch *winch);
+
 void Winch_Run_Step(Winch *winch, uint16_t t_num, float time_step, float (*motor_angle)[t_num], float (*pose_ref)[t_num]);
+void Winch_Run_Step_Lift(Winch *winch, uint16_t t_num, float time_step, float motor_angle[t_num], float (*pose_ref)[t_num]);
 
 // 自标定模式相关函数声明
 void Winch_Start_SelfCalibration(Winch *winch);

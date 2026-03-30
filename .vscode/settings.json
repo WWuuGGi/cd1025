@@ -8,6 +8,20 @@
         "atomic": "c",
         "winch.h": "c",
         "string.h": "c",
-        "numbers": "c"
+        "numbers": "c",
+        "string": "cpp",
+        "array": "cpp",
+        "string_view": "cpp",
+        "initializer_list": "cpp",
+        "algorithm": "c",
+        "ostream": "c",
+        "utility": "c",
+        "jy901s.h": "c",
+        "robot.h": "c",
+        "numeric": "c",
+        "streambuf": "c",
+        "system_error": "c",
+        "tuple": "c",
+        "mpu6500_reg.h": "c"
     }
 }

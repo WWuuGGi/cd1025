@@ -130,7 +130,7 @@ void MX_FREERTOS_Init(void) {
   TrjTaskHandle = osThreadCreate(osThread(TrjTask), NULL);
 
   /* definition and creation of UploadTask */
-  osThreadDef(UploadTask, StartUploadTask, osPriorityIdle, 0, 512);
+  osThreadDef(UploadTask, StartUploadTask, osPriorityIdle, 0, 128);
   UploadTaskHandle = osThreadCreate(osThread(UploadTask), NULL);
 
   /* definition and creation of SendPoseTask */

@@ -1,5 +1,4 @@
 --cpu=Cortex-M4.fp.sp
-"cd1025\dma.o"
 "cd1025\startup_stm32f427xx.o"
 "cd1025\app.o"
 "cd1025\bsp.o"
@@ -17,6 +16,7 @@
 "cd1025\gpio.o"
 "cd1025\freertos.o"
 "cd1025\can.o"
+"cd1025\dma_1.o"
 "cd1025\spi.o"
 "cd1025\tim.o"
 "cd1025\usart.o"

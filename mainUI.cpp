@@ -1,5 +1,7 @@
 #include "mainUI.h"
 #include "ui_mainUI.h"
+#include <QUrl>
+#include <QDebug>
 
 mainUI::mainUI(QWidget *parent)
     : QWidget(parent)
@@ -50,143 +52,143 @@ mainUI::mainUI(QWidget *parent)
     connect(drawLineTimer, SIGNAL(timeout()), this, SLOT(DrawLine()));
     // connect(scTimer, SIGNAL(timeout()), this, SLOT(scProcessCalibrationData()));
 
-    // 初始化相机预览控件，将其放置在cameraPage中
-    m_viewfinder = new QCameraViewfinder(ui->cameraPage);
-    m_viewfinder->setGeometry(10, 10, 640, 480);
-    m_viewfinder->setMinimumSize(640, 480);
+    // // 初始化相机预览控件，将其放置在cameraPage中
+    // m_viewfinder = new QCameraViewfinder(ui->cameraPage);
+    // m_viewfinder->setGeometry(10, 10, 640, 480);
+    // m_viewfinder->setMinimumSize(640, 480);
 
-    // 使用UI设计器中创建的标签控件（假设在设计器中已添加名为photoLabel的QLabel）
-    // 注意：需要在ui文件中确保photoLabel已放置在cameraPage页面中并设置了合适的几何属性
-    m_labelPhoto = ui->photoLabel;
+    // // 使用UI设计器中创建的标签控件（假设在设计器中已添加名为photoLabel的QLabel）
+    // // 注意：需要在ui文件中确保photoLabel已放置在cameraPage页面中并设置了合适的几何属性
+    // m_labelPhoto = ui->photoLabel;
 
-    // 使用现有的UI控件进行信号槽连接
-    connect(ui->shootBtn, &QPushButton::clicked, this, &mainUI::onCaptureImage);
+    // // 使用现有的UI控件进行信号槽连接
+    // connect(ui->shootBtn, &QPushButton::clicked, this, &mainUI::onCaptureImage);
 
-    // 创建临时的打开/关闭按钮（也可以在UI设计器中添加）
-    m_btnOpen = new QPushButton("打开摄像头", ui->cameraPage);
-    m_btnOpen->setGeometry(100, 540, 100, 30);
-    m_btnClose = new QPushButton("关闭摄像头", ui->cameraPage);
-    m_btnClose->setGeometry(250, 540, 100, 30);
+    // // 创建临时的打开/关闭按钮（也可以在UI设计器中添加）
+    // m_btnOpen = new QPushButton("打开摄像头", ui->cameraPage);
+    // m_btnOpen->setGeometry(100, 540, 100, 30);
+    // m_btnClose = new QPushButton("关闭摄像头", ui->cameraPage);
+    // m_btnClose->setGeometry(250, 540, 100, 30);
     
-    // 连接打开/关闭摄像头按钮的信号
-    connect(m_btnOpen, &QPushButton::clicked, this, &mainUI::onOpenCamera);
-    connect(m_btnClose, &QPushButton::clicked, this, &mainUI::onCloseCamera);
+    // // 连接打开/关闭摄像头按钮的信号
+    // connect(m_btnOpen, &QPushButton::clicked, this, &mainUI::onOpenCamera);
+    // connect(m_btnClose, &QPushButton::clicked, this, &mainUI::onCloseCamera);
 
-    // 获取并显示可用摄像头列表
-    cameras = QCameraInfo::availableCameras();
-    for(const QCameraInfo &cameraInfo : cameras)
-    {
-        ui->cameraSel->addItem(cameraInfo.description());
-    }
+    // // 获取并显示可用摄像头列表
+    // cameras = QCameraInfo::availableCameras();
+    // for(const QCameraInfo &cameraInfo : cameras)
+    // {
+    //     ui->cameraSel->addItem(cameraInfo.description());
+    // }
     
-    // 摄像头选择变更的连接
-    connect(ui->cameraSel, QOverload<int>::of(&QComboBox::activated),[=](int index){
-        if(m_camera) {
-            m_camera->stop();
-            delete m_camera;
-            m_camera = nullptr;
-            delete m_imageCapture;
-            m_imageCapture = nullptr;
-        }
+    // // 摄像头选择变更的连接
+    // connect(ui->cameraSel, QOverload<int>::of(&QComboBox::activated),[=](int index){
+    //     if(m_camera) {
+    //         m_camera->stop();
+    //         delete m_camera;
+    //         m_camera = nullptr;
+    //         delete m_imageCapture;
+    //         m_imageCapture = nullptr;
+    //     }
         
-        m_camera = new QCamera(cameras[index], this);
-        m_camera->setViewfinder(m_viewfinder);
+    //     m_camera = new QCamera(cameras[index], this);
+    //     m_camera->setViewfinder(m_viewfinder);
         
-        m_imageCapture = new QCameraImageCapture(m_camera, this);
-        connect(m_imageCapture, &QCameraImageCapture::imageCaptured,
-                this, &mainUI::onImageCaptured);
+    //     m_imageCapture = new QCameraImageCapture(m_camera, this);
+    //     connect(m_imageCapture, &QCameraImageCapture::imageCaptured,
+    //             this, &mainUI::onImageCaptured);
         
-        m_camera->start();
+    //     m_camera->start();
         
-        // 更新分辨率选项
-        ui->resolutionSel->clear();
-        QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
-        for(const QSize &size : resSize)
-        {
-            ui->resolutionSel->addItem(QString::number(size.width()) + "*" + QString::number(size.height()));
-        }
-        ui->resolutionSel->setCurrentIndex(0);
-    });
+    //     // 更新分辨率选项
+    //     ui->resolutionSel->clear();
+    //     QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
+    //     for(const QSize &size : resSize)
+    //     {
+    //         ui->resolutionSel->addItem(QString::number(size.width()) + "*" + QString::number(size.height()));
+    //     }
+    //     ui->resolutionSel->setCurrentIndex(0);
+    // });
     
-    // 分辨率选择变更的连接
-    connect(ui->resolutionSel, QOverload<int>::of(&QComboBox::activated), [=](int index){
-        if(!m_camera) return;
+    // // 分辨率选择变更的连接
+    // connect(ui->resolutionSel, QOverload<int>::of(&QComboBox::activated), [=](int index){
+    //     if(!m_camera) return;
         
-        QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
-        if(index >= 0 && index < resSize.size()) {
-            QCameraViewfinderSettings settings;
-            settings.setResolution(resSize[index]);
-            m_camera->setViewfinderSettings(settings);
-        }
-    });
+    //     QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
+    //     if(index >= 0 && index < resSize.size()) {
+    //         QCameraViewfinderSettings settings;
+    //         settings.setResolution(resSize[index]);
+    //         m_camera->setViewfinderSettings(settings);
+    //     }
+    // });
 }
 
-void mainUI::onOpenCamera()
-{
-    if (m_camera) return; // 已经打开
+// void mainUI::onOpenCamera()
+// {
+//     if (m_camera) return; // 已经打开
 
-    // 获取当前选择的摄像头
-    int currentIndex = ui->cameraSel->currentIndex();
-    if(currentIndex >= 0 && currentIndex < cameras.size()) {
-        m_camera = new QCamera(cameras[currentIndex], this);
-    } else if(!cameras.isEmpty()) {
-        // 如果没有选择或索引无效，使用第一个摄像头
-        m_camera = new QCamera(cameras.first(), this);
-        ui->cameraSel->setCurrentIndex(0);
-    } else {
-        qDebug() << "未找到可用摄像头";
-        return;
-    }
+//     // 获取当前选择的摄像头
+//     int currentIndex = ui->cameraSel->currentIndex();
+//     if(currentIndex >= 0 && currentIndex < cameras.size()) {
+//         m_camera = new QCamera(cameras[currentIndex], this);
+//     } else if(!cameras.isEmpty()) {
+//         // 如果没有选择或索引无效，使用第一个摄像头
+//         m_camera = new QCamera(cameras.first(), this);
+//         ui->cameraSel->setCurrentIndex(0);
+//     } else {
+//         qDebug() << "未找到可用摄像头";
+//         return;
+//     }
     
-    m_camera->setViewfinder(m_viewfinder);
+//     m_camera->setViewfinder(m_viewfinder);
 
-    m_imageCapture = new QCameraImageCapture(m_camera, this);
-    connect(m_imageCapture, &QCameraImageCapture::imageCaptured,
-            this, &mainUI::onImageCaptured);
+//     m_imageCapture = new QCameraImageCapture(m_camera, this);
+//     connect(m_imageCapture, &QCameraImageCapture::imageCaptured,
+//             this, &mainUI::onImageCaptured);
 
-    m_camera->start();
-    qDebug() << "摄像头已打开";
+//     m_camera->start();
+//     qDebug() << "摄像头已打开";
     
-    // 更新分辨率选项
-    ui->resolutionSel->clear();
-    QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
-    for(const QSize &size : resSize)
-    {
-        ui->resolutionSel->addItem(QString::number(size.width()) + "*" + QString::number(size.height()));
-    }
-    ui->resolutionSel->setCurrentIndex(0);
-}
+//     // 更新分辨率选项
+//     ui->resolutionSel->clear();
+//     QList<QSize> resSize = m_camera->supportedViewfinderResolutions();
+//     for(const QSize &size : resSize)
+//     {
+//         ui->resolutionSel->addItem(QString::number(size.width()) + "*" + QString::number(size.height()));
+//     }
+//     ui->resolutionSel->setCurrentIndex(0);
+// }
 
-void mainUI::onCaptureImage()
-{
-    if (!m_imageCapture) return;
+// void mainUI::onCaptureImage()
+// {
+//     if (!m_imageCapture) return;
 
-    QString filename = QString("photo_%1.jpg")
-                           .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
-    m_imageCapture->capture(filename);
-    qDebug() << "已拍照保存到:" << filename;
-}
+//     QString filename = QString("photo_%1.jpg")
+//                            .arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
+//     m_imageCapture->capture(filename);
+//     qDebug() << "已拍照保存到:" << filename;
+// }
 
-void mainUI::onCloseCamera()
-{
-    if (m_camera) {
-        m_camera->stop();
-        delete m_camera;
-        m_camera = nullptr;
+// void mainUI::onCloseCamera()
+// {
+//     if (m_camera) {
+//         m_camera->stop();
+//         delete m_camera;
+//         m_camera = nullptr;
 
-        delete m_imageCapture;
-        m_imageCapture = nullptr;
+//         delete m_imageCapture;
+//         m_imageCapture = nullptr;
 
-        qDebug() << "摄像头已关闭";
-    }
-}
+//         qDebug() << "摄像头已关闭";
+//     }
+// }
 
-void mainUI::onImageCaptured(int, const QImage &preview)
-{
-    m_labelPhoto->setPixmap(QPixmap::fromImage(preview).scaled(m_labelPhoto->size(),
-                                                               Qt::KeepAspectRatio,
-                                                               Qt::SmoothTransformation));
-}
+// void mainUI::onImageCaptured(int, const QImage &preview)
+// {
+//     m_labelPhoto->setPixmap(QPixmap::fromImage(preview).scaled(m_labelPhoto->size(),
+//                                                                Qt::KeepAspectRatio,
+//                                                                Qt::SmoothTransformation));
+// }
 
 
 mainUI::~mainUI()
@@ -197,6 +199,65 @@ mainUI::~mainUI()
         MySerialPort->close();
     }
     delete ui;
+}
+
+void mainUI::webCam()
+{
+    // 1. 初始化 WebEngine 视图
+    m_webView = new QWebEngineView(this);
+
+    QStackedLayout *layout = new QStackedLayout(ui->webcamFrame);
+    ui->webcamFrame->setLayout(layout);
+    layout->addWidget(m_webView);
+
+    // 2. 设置树莓派 WEB 端地址（二选一）
+    // 🔴 方式A：树莓派 AP 模式（Windows 连 AccessPopup 热点）
+    QUrl webUrl("https://www.baidu.com");
+    // QUrl webUrl("http://192.168.50.5:5000");
+    // 🔴 方式B：树莓派 STA 模式（替换为实际 IP，如 192.168.10.50）
+    // QUrl webUrl("http://192.168.10.50:5000");
+
+    // 3. 加载 WEB 页面
+    m_webView->load(webUrl);
+
+    m_webView->show();
+    // 4. 调试：打印加载状态（可选）
+    connect(m_webView, &QWebEngineView::loadStarted, []() {
+        qDebug() << "开始加载树莓派 WEB 端...";
+    });
+    connect(m_webView, &QWebEngineView::loadFinished, [](bool success) {
+        if (success) {
+            qDebug() << "WEB 端加载成功！";
+        } else {
+            qDebug() << "WEB 端加载失败，请检查网络/地址！";
+        }
+    });
+
+
+    // 5. 将 WebView 设置为主窗口中央部件（占满窗口）
+    // setCentralWidget(m_webView);
+
+    // // 6. 设置窗口属性（可选）
+    // setWindowTitle("树莓派机器人 WEB 控制客户端");
+    // resize(800, 600);  // 适配视频流分辨率（640x480）
+}
+
+
+void mainUI::on_iploadBtn_clicked()
+{
+    //加载按钮槽函数，加载地址栏里面显示的链接。
+    QString url = ui->addressEdit->text();
+    if (!url.isEmpty())
+    {
+        m_webView->load(url);
+
+    }
+}
+
+void mainUI::on_ipreloadBtn_clicked()
+{
+    //刷新按钮槽函数，刷新地址栏里显示的链接
+    m_webView->reload();
 }
 
 void mainUI::SerialInit()
@@ -287,13 +348,13 @@ void mainUI::on_beginBtn_clicked()
 
 // 串口接收数据并解析
 QByteArray rxbuff;
-float angle[4], bodyPose[3], velocityPose[3];
+float angle[5], bodyPose[3], velocityPose[3];
 uint8_t trj_index = 0;
-QString angleStr[4], bodyPoseStr[3], velocityPoseStr[3];
+QString angleStr[5], bodyPoseStr[3], velocityPoseStr[3];
 
 uint8_t Res;  //读取到的每一字节数据
 int16_t USART_RX_STA = 0; //接收状态标志
-#define USART_REC_LEN 41 //定义最大接收字节数
+#define USART_REC_LEN 45 //定义最大接收字节数
 uint8_t USART_RX_BUF[USART_REC_LEN]; //接收缓冲区
 // 串口接收定时器
 void mainUI::SerialTimerStart()
@@ -307,6 +368,7 @@ void mainUI::ReadData()
     for(int i =0; i < rxbuff.size(); i++)
     {
         Res = rxbuff[i];
+        // qDebug() << "data[" << i << "] =" << QString::number(Res).rightJustified(2, '0');
         if((USART_RX_STA&0x8000))//接收已开始
         {
             if((USART_RX_STA&0x4000))
@@ -345,6 +407,11 @@ void mainUI::ReadData()
 
     if(USART_RX_STA == 0)
     {
+        // qDebug() << "Complete packet received:";
+        // for(int i = 0; i < USART_REC_LEN; i++)
+        // {
+        //     qDebug() << "USART_RX_BUF[" << i << "] = 0x" << QString::number(USART_RX_BUF[i], 16).rightJustified(2, '0');
+        // }
         DataProcess(USART_RX_BUF);
     }
 
@@ -355,6 +422,12 @@ void mainUI::ReadData()
 // 对数据帧进行解析
 void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
 {
+    // 输出接收到的全部数据
+    // qDebug() << "Received data:";
+    // for(int i = 0; i < USART_REC_LEN; i++) {
+    //     qDebug() << "data[" << i << "] =" << QString::number(data[i], 16).rightJustified(2, '0');
+    // }
+    
     bodyPose[0] = ((float)((int32_t)(data[0] | (((uint32_t)data[1]) << 8) | (((uint32_t)data[2]) << 16) | (((uint32_t)data[3]) << 24)))) / 1000.0f;
     bodyPose[1] = ((float)((int32_t)(data[4] | (((uint32_t)data[5]) << 8) | (((uint32_t)data[6]) << 16) | (((uint32_t)data[7]) << 24)))) / 1000.0f;
     bodyPose[2] = ((float)((int32_t)(data[8] | (((uint32_t)data[9]) << 8) | (((uint32_t)data[10]) << 16) | (((uint32_t)data[11]) << 24)))) / 1000.0f;
@@ -363,12 +436,13 @@ void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
     angle[1] = ((float)((int32_t)(data[16] | (((uint32_t)data[17]) << 8) | (((uint32_t)data[18]) << 16) | (((uint32_t)data[19]) << 24)))) / 1000.0f;
     angle[2] = ((float)((int32_t)(data[20] | (((uint32_t)data[21]) << 8) | (((uint32_t)data[22]) << 16) | (((uint32_t)data[23]) << 24)))) / 1000.0f;
     angle[3] = ((float)((int32_t)(data[24] | (((uint32_t)data[25]) << 8) | (((uint32_t)data[26]) << 16) | (((uint32_t)data[27]) << 24)))) / 1000.0f;
+    angle[4] = ((float)((int32_t)(data[28] | (((uint32_t)data[29]) << 8) | (((uint32_t)data[30]) << 16) | (((uint32_t)data[31]) << 24)))) / 1000.0f;
+    // qDebug() << QString::number(angle[4]).rightJustified(2, '0');
+    velocityPose[0] = ((float)((int32_t)(data[32] | (((uint32_t)data[33]) << 8) | (((uint32_t)data[34]) << 16) | (((uint32_t)data[35]) << 24)))) / 1000.0f;
+    velocityPose[1] = ((float)((int32_t)(data[36] | (((uint32_t)data[37]) << 8) | (((uint32_t)data[38]) << 16) | (((uint32_t)data[39]) << 24)))) / 1000.0f;
+    velocityPose[2] = ((float)((int32_t)(data[40] | (((uint32_t)data[41]) << 8) | (((uint32_t)data[42]) << 16) | (((uint32_t)data[43]) << 24)))) / 1000.0f;
 
-    velocityPose[0] = ((float)((int32_t)(data[28] | (((uint32_t)data[29]) << 8) | (((uint32_t)data[30]) << 16) | (((uint32_t)data[31]) << 24)))) / 1000.0f;
-    velocityPose[1] = ((float)((int32_t)(data[32] | (((uint32_t)data[33]) << 8) | (((uint32_t)data[34]) << 16) | (((uint32_t)data[35]) << 24)))) / 1000.0f;
-    velocityPose[2] = ((float)((int32_t)(data[36] | (((uint32_t)data[37]) << 8) | (((uint32_t)data[38]) << 16) | (((uint32_t)data[39]) << 24)))) / 1000.0f;
-
-    trj_index = data[40];
+    trj_index = data[44];
 
     for(int i=0; i<3; i++)
     {
@@ -376,7 +450,7 @@ void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
         velocityPoseStr[i] = QString::number(velocityPose[i],'f',3);
     }
 
-    for(int i=0; i<4; i++)
+    for(int i=0; i<5; i++)
     {
         angleStr[i] = QString::number(angle[i],'f',3);
     }
@@ -385,6 +459,7 @@ void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
     ui->angleLFEdit->setText(angleStr[1]);
     ui->angleLBEdit->setText(angleStr[2]);
     ui->angleRBEdit->setText(angleStr[3]);
+    ui->angleLIFTEdit->setText(angleStr[4]);
 
     ui->bodyPoseXEdit->setText(bodyPoseStr[0]);
     ui->bodyPoseYEdit->setText(bodyPoseStr[1]);
@@ -879,6 +954,61 @@ void mainUI::on_looseRopeBtn_RB_released()
     MySerialPort->write(TxData);
 }
 
+
+void mainUI::on_tightRopeBtn_LIFT_pressed()
+{
+    QByteArray TxData;
+    TxData.append('#');
+    TxData.append('S');
+    TxData.append('M');
+    TxData.append('\x05');
+    TxData.append('\x00');
+    int16_t speed = ui->speedEdit_LIFT->text().toInt();
+    TxData.append((speed >> 8));
+    TxData.append(speed);
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_tightRopeBtn_LIFT_released()
+{
+    QByteArray TxData;
+    TxData.append('#');
+    TxData.append('S');
+    TxData.append('M');
+    TxData.append('\x05');
+    TxData.append('\x00');
+    TxData.append('\x00');
+    TxData.append('\x00');
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_looseRopeBtn_LIFT_pressed()
+{
+    QByteArray TxData;
+    TxData.append('#');
+    TxData.append('S');
+    TxData.append('M');
+    TxData.append('\x05');
+    TxData.append('\x01');
+    int16_t speed = ui->speedEdit_LIFT->text().toInt();
+    TxData.append((speed >> 8));
+    TxData.append(speed);
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_looseRopeBtn_LIFT_released()
+{
+    QByteArray TxData;
+    TxData.append('#');
+    TxData.append('S');
+    TxData.append('M');
+    TxData.append('\x05');
+    TxData.append('\x01');
+    TxData.append('\x00');
+    TxData.append('\x00');
+    MySerialPort->write(TxData);
+}
+
 // 轨迹规划模式
 void mainUI::on_tensionTrjBtn_clicked()
 {
@@ -931,7 +1061,7 @@ void mainUI::on_trjFallBtn_clicked()
     MySerialPort->write(TxData);
 }
 
-//夹爪命令
+// 夹爪命令
 void mainUI::on_grabBtn_clicked()
 {
     QByteArray TxData;
@@ -943,6 +1073,37 @@ void mainUI::on_looseBtn_clicked()
 {
     QByteArray TxData;
     TxData = "Loose";
+    MySerialPort->write(TxData);
+}
+
+// 平台升降模式
+void mainUI::on_LiftModeBtn_pressed()
+{
+    ui->modeStackedWidget->setCurrentWidget(ui->LiftModePage);
+    QByteArray TxData;
+    TxData = "LIFT";
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_liftUpBtn_clicked()
+{
+    QByteArray TxData;
+    TxData = "#Tup";
+    MySerialPort->write(TxData);
+
+}
+
+void mainUI::on_liftDownBtn_clicked()
+{
+    QByteArray TxData;
+    TxData = "#Tdown";
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_liftStopBtn_clicked()
+{
+    QByteArray TxData;
+    TxData = "#Tstop";
     MySerialPort->write(TxData);
 }
 

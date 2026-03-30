@@ -43,7 +43,7 @@ void Winch_SetPID(Winch *winch)
     PID_Set(winch->M2006_position_pid[3], 120, 2, 20, 2000, 16384, PID_POSITION);
 
     PID_Set(winch->M2006_speed_pid[4], 1, 0, 5, 0, 16384, PID_POSITION);
-    PID_Set(winch->M2006_position_pid[4], 120, 2, 20, 2000, 16384, PID_POSITION);
+    PID_Set(winch->M2006_position_pid[4], 100, 2, 12, 2000, 16384, PID_POSITION);
 }
 
 void Winch_RxCallback(uint8_t *data)
@@ -66,7 +66,7 @@ void Winch_RxCallback(uint8_t *data)
     {
         winch_instance->mode = Winch_mode_T;
         //获取初始位置
-        for (uint8_t i = 0; i < 4; i++)
+        for (uint8_t i = 0; i < 5; i++)
         {
             winch_instance->CAN1_M2006[i]->init_pos = winch_instance->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
         }
@@ -90,7 +90,7 @@ void Winch_RxCallback(uint8_t *data)
     {
         // 切换到平台升降模式
         winch_instance->mode = Winch_mode_Lift;
-        winch_instance->trj_CpltFlag = 0;  // 重置完成标志
+        //winch_instance->trj_CpltFlag = 0;  // 重置完成标志
         for (uint8_t i = 0; i < 5; i++)
         {
             winch_instance->CAN1_M2006[i]->init_pos = winch_instance->CAN1_M2006[i]->realPos * 360.0f / 8192.0f / 36.0f;
@@ -106,6 +106,7 @@ void Winch_RxCallback(uint8_t *data)
         else if(data[4] == 0x01)
             winch_instance->CAN1_M2006[M2006_index-1]->ref_speed = -(float)(((uint16_t)data[5] << 8) | data[6]);
     }
+
 
     if((data[0] == '#') && (data[1] == 'T'))
     {
@@ -267,7 +268,7 @@ void Winch_ConstantTorque(Winch *winch)
             winch_motor_output[4] = 0;
             break;
         case 1:
-            winch_motor_output[0] = 500;
+            winch_motor_output[0] = 800;
             winch_motor_output[1] = 0;
             winch_motor_output[2] = 0;
             winch_motor_output[3] = 0;
@@ -275,7 +276,7 @@ void Winch_ConstantTorque(Winch *winch)
             break;
         case 2:
             winch_motor_output[0] = 0;
-            winch_motor_output[1] = 500;
+            winch_motor_output[1] = 800;
             winch_motor_output[2] = 0;
             winch_motor_output[3] = 0;
             winch_motor_output[4] = 0;
@@ -283,7 +284,7 @@ void Winch_ConstantTorque(Winch *winch)
         case 3:
             winch_motor_output[0] = 0;
             winch_motor_output[1] = 0;
-            winch_motor_output[2] = 500;
+            winch_motor_output[2] = 800;
             winch_motor_output[3] = 0;
             winch_motor_output[4] = 0;
             break;
@@ -291,14 +292,14 @@ void Winch_ConstantTorque(Winch *winch)
             winch_motor_output[0] = 0;
             winch_motor_output[1] = 0;
             winch_motor_output[2] = 0;
-            winch_motor_output[3] = 500;
+            winch_motor_output[3] = 800;
             winch_motor_output[4] = 0;
             break;
         case 5:
-            winch_motor_output[0] = 500;
-            winch_motor_output[1] = 500;
-            winch_motor_output[2] = 500;
-            winch_motor_output[3] = 500;    
+            winch_motor_output[0] = 800;
+            winch_motor_output[1] = 800;
+            winch_motor_output[2] = 800;
+            winch_motor_output[3] = 800;    
             winch_motor_output[4] = 0;
             break;
         default:
@@ -372,7 +373,7 @@ void Winch_SelfCalibration(Winch *winch)
         //先全部置零，实验先大电流后小电流的执行效果
 
     }
-    winch_motor_output[fc_rope] = 500;
+    // winch_motor_output[fc_rope] = 500;
     winch_motor_output[4] = 0;
 
     
@@ -420,11 +421,9 @@ void Winch_SelfCalibration(Winch *winch)
 // 升降平台模式控制函数
 void Winch_LiftControl(Winch *winch)
 {
-        // 计算当前位置（圈数）
-        // winch->lift_current_pos = winch->CAN1_M2006[4]->realPos * 360.0f / 8192.0f / 36.0f;
         
         // 位置环控制
-        winch->M2006_position_pid[4]->ref = winch->lift_ref_pos;
+        winch->M2006_position_pid[4]->ref = winch->CAN1_M2006[4]->ref_pos;
         winch->M2006_position_pid[4]->fdb = winch->CAN1_M2006[4]->realPos * 360.0f / 8192.0f / 36.0f;
         //winch->M2006_position_pid[4]->fdb = winch->lift_current_pos;
         PID_Calc(winch->M2006_position_pid[4]);  
@@ -436,10 +435,10 @@ void Winch_LiftControl(Winch *winch)
         winch_motor_output[4] = winch->M2006_speed_pid[4]->output;
         
         // 其他电机保持静止
-        winch_motor_output[0] = 0;
-        winch_motor_output[1] = 0;
-        winch_motor_output[2] = 0;
-        winch_motor_output[3] = 0;
+        winch_motor_output[0] = 800;
+        winch_motor_output[1] = 800;
+        winch_motor_output[2] = 800;
+        winch_motor_output[3] = 800;
 
 
 }

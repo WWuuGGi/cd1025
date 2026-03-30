@@ -1,4 +1,4 @@
-QT       += core gui serialport charts multimedia multimediawidgets
+QT       += core gui serialport charts multimedia multimediawidgets webenginewidgets
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,6 +25,8 @@ HEADERS += \
 FORMS += \
     mainUI.ui
 
+QMAKE_PROJECT_DEPTH = 0
+# 使语法包含绝对路径
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

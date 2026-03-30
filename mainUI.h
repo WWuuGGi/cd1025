@@ -15,25 +15,27 @@
 #include <vector>
 #include <QMessageBox>
 
+#include <QStackedLayout>
 #include <QtCharts/QChartView>
 #include <QtCharts/QSplineSeries>
 #include <QValueAxis>
+#include <QWebEngineView>  // 引入 WebEngine 视图头文件
 
-#include <Qcamera>
-#include <QCameraImageCapture>
-#include <qcamerainfo>
-#include <QCameraViewfinder>
+//#include <Qcamera>
+//#include <QCameraImageCapture>
+//#include <qcamerainfo>
+//#include <QCameraViewfinder>
 #include <QPixmap>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QLabel>
-class QCamera;
-class QCameraViewfinder;
-class QCameraImageCapture;
-class QCameraInfo;
-class QCameraViewfinderSettings;
+// class QCamera;
+// class QCameraViewfinder;
+// class QCameraImageCapture;
+// class QCameraInfo;
+// class QCameraViewfinderSettings;
 
-QT_CHARTS_USE_NAMESPACE
+// QT_CHARTS_USE_NAMESPACE
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class mainUI; }
@@ -80,6 +82,7 @@ public:
 
     void SerialInit();
     void poseXChartInit();
+    void webCam();
 
 private slots:
     // void scProcessCalibrationData(); //处理标定数据
@@ -213,35 +216,55 @@ private slots:
 
     void on_trjFallBtn_clicked();
 
+    // 平台升降模式
+    void on_LiftModeBtn_pressed();
+    void on_liftUpBtn_clicked();
+    void on_liftDownBtn_clicked();
+    void on_liftStopBtn_clicked();
+
+    //单关节电动，升降平台电机控制
+    void on_tightRopeBtn_LIFT_pressed();
+
+    void on_tightRopeBtn_LIFT_released();
+
+    void on_looseRopeBtn_LIFT_pressed();
+
+    void on_looseRopeBtn_LIFT_released();
 
     void on_grabBtn_clicked();
 
     void on_looseBtn_clicked();
 
-    void onOpenCamera();
-    void onCaptureImage();
-    void onCloseCamera();
-    void onImageCaptured(int id, const QImage &preview);
+    void on_iploadBtn_clicked();
+    void on_ipreloadBtn_clicked();
+
+    // void onOpenCamera();
+    // void onCaptureImage();
+    // void onCloseCamera();
+    // void onImageCaptured(int id, const QImage &preview);
 private:
     Ui::mainUI *ui;
     QSerialPort *MySerialPort;
     QVector<QString> saveData;
     int count = 0; //用于绘制曲线的计数
+
+    QWebEngineView *m_webView;
+
     // QCamera *camera;
     // QCameraImageCapture *capture;
     // QCameraViewfinder *viewfinder;
     // QCameraImageCapture *imageCapture;
-    QList<QCameraInfo> cameras;
-    QList<QSize> mResSize;
+    // QList<QCameraInfo> cameras;
+    // QList<QSize> mResSize;
 
-    QCamera *m_camera = nullptr;
-    QCameraViewfinder *m_viewfinder = nullptr;
-    QCameraImageCapture *m_imageCapture = nullptr;
+    // QCamera *m_camera = nullptr;
+    // QCameraViewfinder *m_viewfinder = nullptr;
+    // QCameraImageCapture *m_imageCapture = nullptr;
 
-    QPushButton *m_btnOpen;
-    QPushButton *m_btnCapture;
-    QPushButton *m_btnClose;
-    QLabel *m_labelPhoto; // 指向UI设计器中创建的photoLabel控件
+    // QPushButton *m_btnOpen;
+    // QPushButton *m_btnCapture;
+    // QPushButton *m_btnClose;
+    // QLabel *m_labelPhoto; // 指向UI设计器中创建的photoLabel控件
 
 };
 #endif // MAINUI_H

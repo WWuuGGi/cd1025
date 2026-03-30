@@ -11,12 +11,21 @@ CAN_TxHeaderTypeDef TxHeader = {
     .RTR = CAN_RTR_DATA
 };
 
+// CAN1发送帧头 - 5~8号电机的另一个帧头
+CAN_TxHeaderTypeDef TxHeader_58 = {
+    .StdId = 0x1FF,
+    .DLC = 0x08,
+    .IDE = CAN_ID_STD,
+    .RTR = CAN_RTR_DATA
+};
+
 // CAN1接收帧头
 CAN_RxHeaderTypeDef RxHeader;
 
 
 //uint8_t CanRxData_FIFO0[8] = {0}; //CAN1接收数据缓冲区
 uint8_t TxData[8] = {0}; //CAN发送数据
+uint8_t TxData_58[8] = {0}; //CAN发送数据
  
 /**
   * @brief CAN外设过滤器初始化
@@ -117,4 +126,31 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	TxData[7] = (uint8_t)(cm4_iq & 0xFF);
     uint32_t Can_TxMailbox;
 	HAL_CAN_AddTxMessage(hcan, &TxHeader, TxData, &Can_TxMailbox);
+ }
+
+ /**
+  * @brief ID5~8的电机电流发送函数
+  * @param ID5~8的各个电机电流值
+  * @retval None
+  */
+ void BSP_CAN_Transmit_58(CAN_HandleTypeDef *hcan, int16_t cm5_iq, int16_t cm6_iq, int16_t cm7_iq, int16_t cm8_iq)
+ {
+	TxData_58[0] = (uint8_t)(cm5_iq >> 8);
+	TxData_58[1] = (uint8_t)(cm5_iq & 0xFF);
+	TxData_58[2] = (uint8_t)(cm6_iq >> 8);
+	TxData_58[3] = (uint8_t)(cm6_iq & 0xFF);
+	TxData_58[4] = (uint8_t)(cm7_iq >> 8);
+	TxData_58[5] = (uint8_t)(cm7_iq & 0xFF);
+	TxData_58[6] = (uint8_t)(cm8_iq >> 8);
+	TxData_58[7] = (uint8_t)(cm8_iq & 0xFF);
+	// TxData_58[0] = (uint8_t)(cm1_iq >> 8);
+	// TxData_58[1] = (uint8_t)(cm1_iq & 0xFF);
+	// TxData_58[2] = (uint8_t)(cm2_iq >> 8);
+	// TxData_58[3] = (uint8_t)(cm2_iq & 0xFF);
+	// TxData_58[4] = (uint8_t)(cm3_iq >> 8);
+	// TxData_58[5] = (uint8_t)(cm3_iq & 0xFF);
+	// TxData_58[6] = (uint8_t)(cm4_iq >> 8);
+	// TxData_58[7] = (uint8_t)(cm4_iq & 0xFF);
+    uint32_t Can_TxMailbox_58;
+	HAL_CAN_AddTxMessage(hcan, &TxHeader_58, TxData_58, &Can_TxMailbox_58);
  }

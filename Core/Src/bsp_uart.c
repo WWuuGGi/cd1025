@@ -40,6 +40,7 @@ void BSP_UART_IDLECallback(UART_HandleTypeDef *huart)
         if(huart == PC_UART)
         {
             Winch_RxCallback(uart_ports[0].rx_buff);
+            Wheel_RxCallback(uart_ports[0].rx_buff);
             HAL_UART_Receive_DMA(huart, uart_ports[0].rx_buff, BSP_UART_BUFFER_SIZE); //重启DMA接收
         }
             
