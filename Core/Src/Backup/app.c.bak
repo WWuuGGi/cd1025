@@ -1,6 +1,6 @@
 #include "app.h"
 
-
+Wheel_Typedef *wheel;
 Winch *winch;
 uint8_t upload_data[47];
 uint8_t pose_data[8];
@@ -20,14 +20,26 @@ void APP_Layer_Init()
     Winch_Drvier_Init();
     winch = Winch_Create();
     Winch_SetPID(winch);
+    wheel = Wheel_Create(winch);
 }
+
+void APP_WheelTask(void)
+{
+    Wheel_Set_Qd();
+    Wheel_Motor_Update();
+    Wheel_Run_Tau();
+    //Stable_Control();
+}
+
 
 void APP_WinchTask()
 {
+    // Wheel_Test();
     Winch_Calc_Output(winch);
     Winch_Send_Current();
     Winch_Pose_SetZero();
 }
+//此处需要在freertos里添加新的任务，配置参考原先代码
 
 void APP_StartTrj()
 {
@@ -43,20 +55,20 @@ void APP_UploadData()
     upload_data[1] = 0x55;
 
     //姿态（保留 X/Y/Z 角，仅用于基本监测）
-    upload_data[2] = ((int32_t)(winch->pose->angleX * 1000.0f)) & 0x000000FF;
-    upload_data[3] = (((int32_t)(winch->pose->angleX * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[4] = (((int32_t)(winch->pose->angleX * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[5] = ((int32_t)(winch->pose->angleX * 1000.0f)) >> 24;
+    upload_data[2] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x000000FF;
+    upload_data[3] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[4] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[5] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) >> 24;
 
-    upload_data[6] = ((int32_t)(winch->pose->angleY * 1000.0f)) & 0x000000FF;
-    upload_data[7] = (((int32_t)(winch->pose->angleY * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[8] = (((int32_t)(winch->pose->angleY * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[9] = ((int32_t)(winch->pose->angleY * 1000.0f)) >> 24;
+    upload_data[6] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x000000FF;
+    upload_data[7] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[8] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[9] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) >> 24;
 
-    upload_data[10] = ((int32_t)(winch->pose->angleZ * 1000.0f)) & 0x000000FF;
-    upload_data[11] = (((int32_t)(winch->pose->angleZ * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[12] = (((int32_t)(winch->pose->angleZ * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[13] = ((int32_t)(winch->pose->angleZ * 1000.0f)) >> 24;
+    upload_data[10] = ((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x000000FF;
+    upload_data[11] = (((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[12] = (((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[13] = ((int32_t)(winch->pose->euler[2] * 1000.0f)) >> 24;
 
     //电机转角（前三路：直接使用 data_process 的 now_pos）
     upload_data[14] = ((int32_t)(winch->CAN1_M2006[0]->now_pos * 1000.0f)) & 0x000000FF;
@@ -85,20 +97,20 @@ void APP_UploadData()
     upload_data[33] = ((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) >> 24;
 
     //姿态角速度
-    upload_data[34] = ((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x000000FF;
-    upload_data[35] = (((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[36] = (((int32_t)(winch->pose->velocityX * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[37] = ((int32_t)(winch->pose->velocityX * 1000.0f)) >> 24;
+    upload_data[34] = ((int32_t)(winch->pose->omega[0] * 1000.0f)) & 0x000000FF;
+    upload_data[35] = (((int32_t)(winch->pose->omega[0] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[36] = (((int32_t)(winch->pose->omega[0] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[37] = ((int32_t)(winch->pose->omega[0] * 1000.0f)) >> 24;
 
-    upload_data[38] = ((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x000000FF;   
-    upload_data[39] = (((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[40] = (((int32_t)(winch->pose->velocityY * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[41] = ((int32_t)(winch->pose->velocityY * 1000.0f)) >> 24;
+    upload_data[38] = ((int32_t)(winch->pose->omega[1] * 1000.0f)) & 0x000000FF;    
+    upload_data[39] = (((int32_t)(winch->pose->omega[1] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[40] = (((int32_t)(winch->pose->omega[1] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[41] = ((int32_t)(winch->pose->omega[1] * 1000.0f)) >> 24;
 
-    upload_data[42] = ((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x000000FF;
-    upload_data[43] = (((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[44] = (((int32_t)(winch->pose->velocityZ * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[45] = ((int32_t)(winch->pose->velocityZ * 1000.0f)) >> 24;
+    upload_data[42] = ((int32_t)(winch->pose->omega[2] * 1000.0f)) & 0x000000FF;
+    upload_data[43] = (((int32_t)(winch->pose->omega[2] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[44] = (((int32_t)(winch->pose->omega[2] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[45] = ((int32_t)(winch->pose->omega[2] * 1000.0f)) >> 24;
 
     upload_data[46] = winch->trj_index;
 

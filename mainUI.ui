@@ -117,13 +117,13 @@
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>290</y>
+       <y>310</y>
        <width>291</width>
        <height>561</height>
       </rect>
      </property>
      <property name="currentIndex">
-      <number>4</number>
+      <number>5</number>
      </property>
      <widget class="QWidget" name="MeasureRopeModePage">
       <widget class="QLabel" name="measureRopeTitleLabel">
@@ -1354,7 +1354,7 @@
       </rect>
      </property>
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="dataPage">
       <attribute name="title">
@@ -1557,19 +1557,6 @@
         </rect>
        </property>
       </widget>
-      <widget class="QPushButton" name="bodyPoseZeroBtn">
-       <property name="geometry">
-        <rect>
-         <x>330</x>
-         <y>310</y>
-         <width>71</width>
-         <height>51</height>
-        </rect>
-       </property>
-       <property name="text">
-        <string>XY归零</string>
-       </property>
-      </widget>
       <widget class="QLabel" name="label_15">
        <property name="geometry">
         <rect>
@@ -1677,6 +1664,39 @@
          <height>25</height>
         </rect>
        </property>
+      </widget>
+      <widget class="QWidget" name="verticalLayoutWidget_3">
+       <property name="geometry">
+        <rect>
+         <x>320</x>
+         <y>280</y>
+         <width>161</width>
+         <height>111</height>
+        </rect>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QPushButton" name="bodyPoseZeroBtn">
+          <property name="text">
+           <string>XY归零</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="wheelStartBtn">
+          <property name="text">
+           <string>动量轮启动</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="wheelStopBtn">
+          <property name="text">
+           <string>动量轮停止</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="curvePage">
@@ -1861,7 +1881,7 @@
        <x>90</x>
        <y>70</y>
        <width>161</width>
-       <height>191</height>
+       <height>211</height>
       </rect>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -1904,6 +1924,13 @@
        <widget class="QRadioButton" name="MeasureRopeModeBtn">
         <property name="text">
          <string>测量初始绳长模式</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="wheelModeBtn">
+        <property name="text">
+         <string>动量轮控制界面</string>
         </property>
        </widget>
       </item>

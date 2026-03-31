@@ -61,3 +61,6 @@ cd1025\freertos.o: ../Core/Inc/JY901S.h
 cd1025\freertos.o: ../Core/Inc/bsp_uart.h
 cd1025\freertos.o: ../Core/Inc/usart.h
 cd1025\freertos.o: ../Core/Inc/trajectory.h
+cd1025\freertos.o: ../Core/Inc/wheel.h
+cd1025\freertos.o: ../Core/Inc/bsp_nidec.h
+cd1025\freertos.o: ../Core/Inc/tim.h

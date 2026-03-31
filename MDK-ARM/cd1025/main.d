@@ -64,8 +64,10 @@ cd1025\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdlib.h
 cd1025\main.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 cd1025\main.o: ../Core/Inc/bsp_motor.h
 cd1025\main.o: ../Core/Inc/bsp_uart.h
+cd1025\main.o: ../Core/Inc/bsp_nidec.h
 cd1025\main.o: ../Core/Inc/app.h
 cd1025\main.o: ../Core/Inc/winch.h
 cd1025\main.o: ../Core/Inc/pid.h
 cd1025\main.o: ../Core/Inc/JY901S.h
 cd1025\main.o: ../Core/Inc/trajectory.h
+cd1025\main.o: ../Core/Inc/wheel.h

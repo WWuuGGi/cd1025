@@ -49,26 +49,79 @@ void JY901S_SetZero()
 
 void JY901S_RxCallback(uint8_t *data)
 {
-    // if(data[1] == 0x53)
-    // {
-    //     JY901S_instance->angleX = (float)((short)(((short)data[3]<<8)|data[2]))/32768*180;
-    //     JY901S_instance->angleY = (float)((short)(((short)data[5]<<8)|data[4]))/32768*180;
-    //     JY901S_instance->angleZ = (float)((short)(((short)data[7]<<8)|data[6]))/32768*180;
-    // }
 
-    if(data[1] == 0x52)
-    {
-        JY901S_instance->velocityX = (float)((short)(((short)data[3]<<8)|data[2]))/32768*2000;
-        JY901S_instance->velocityY = (float)((short)(((short)data[5]<<8)|data[4]))/32768*2000;
-        JY901S_instance->velocityZ = (float)((short)(((short)data[7]<<8)|data[6]))/32768*2000;
+// // if(data[1] == 0x53)
+//     // {
+//     //     JY901S_instance->angleX = (float)((short)(((short)data[3]<<8)|data[2]))/32768*180;
+//     //     JY901S_instance->angleY = (float)((short)(((short)data[5]<<8)|data[4]))/32768*180;
+//     //     JY901S_instance->angleZ = (float)((short)(((short)data[7]<<8)|data[6]))/32768*180;
+//     // }
 
-        if(data[12] == 0x53)
-        {
-            JY901S_instance->angleX = (float)((short)(((short)data[14]<<8)|data[13]))/32768*180;
-            JY901S_instance->angleY = (float)((short)(((short)data[16]<<8)|data[15]))/32768*180;
-            JY901S_instance->angleZ = (float)((short)(((short)data[18]<<8)|data[17]))/32768*180;
-        }
+//     if(data[1] == 0x52)
+//     {
+//         //角速度
+//         JY901S_instance->velocityX = (float)((short)(((short)data[3]<<8)|data[2]))/32768*2000;
+//         JY901S_instance->velocityY = (float)((short)(((short)data[5]<<8)|data[4]))/32768*2000;
+//         JY901S_instance->velocityZ = (float)((short)(((short)data[7]<<8)|data[6]))/32768*2000;
+
+//         if(data[12] == 0x53)
+//         {
+//             //角度
+//             JY901S_instance->angleX = (float)((short)(((short)data[14]<<8)|data[13]))/32768*180;
+//             JY901S_instance->angleY = (float)((short)(((short)data[16]<<8)|data[15]))/32768*180;
+//             JY901S_instance->angleZ = (float)((short)(((short)data[18]<<8)|data[17]))/32768*180;
+//         }
         
-    }
+//     }
+
+    uint16_t i = 0;
+    uint16_t data_len = 255;
     
+    while(i < data_len - 10)
+    {
+        if(data[i] == 0x55)
+        {
+            uint8_t packet_type = data[i + 1];
+            
+            switch(packet_type)
+            {
+                case 0x52:
+                    //角速度
+                    JY901S_instance->omega[0] = (float)((short)(((short)data[i + 3] << 8) | data[i + 2])) / 32768.0f * 2000.0f;
+                    JY901S_instance->omega[1] = (float)((short)(((short)data[i + 5] << 8) | data[i + 4])) / 32768.0f * 2000.0f;
+                    JY901S_instance->omega[2] = (float)((short)(((short)data[i + 7] << 8) | data[i + 6])) / 32768.0f * 2000.0f;
+                    // JY901S_instance->omega[0] = JY901S_instance->velocityX;
+                    // JY901S_instance->omega[1] = JY901S_instance->velocityY;
+                    // JY901S_instance->omega[2] = JY901S_instance->velocityZ;
+                    break;
+                    
+                case 0x53:
+                    //角度
+                    JY901S_instance->euler[0] = (float)((short)(((short)data[i + 3] << 8) | data[i + 2])) / 32768.0f * 180.0f;
+                    JY901S_instance->euler[1] = (float)((short)(((short)data[i + 5] << 8) | data[i + 4])) / 32768.0f * 180.0f;
+                    JY901S_instance->euler[2] = (float)((short)(((short)data[i + 7] << 8) | data[i + 6])) / 32768.0f * 180.0f;
+                    // JY901S_instance->euler[0] = JY901S_instance->angleX;
+                    // JY901S_instance->euler[1] = JY901S_instance->angleY;
+                    // JY901S_instance->euler[2] = JY901S_instance->angleZ;
+                    break;
+                    
+                case 0x59:
+                    //四元数
+                    JY901S_instance->q[0] = (float)((short)(((short)data[i + 3] << 8) | data[i + 2])) / 32768.0f;
+                    JY901S_instance->q[1] = (float)((short)(((short)data[i + 5] << 8) | data[i + 4])) / 32768.0f;
+                    JY901S_instance->q[2] = (float)((short)(((short)data[i + 7] << 8) | data[i + 6])) / 32768.0f;
+                    JY901S_instance->q[3] = (float)((short)(((short)data[i + 9] << 8) | data[i + 8])) / 32768.0f;
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            i += 11;
+        }
+        else
+        {
+            i++;
+        }
+    }
 }

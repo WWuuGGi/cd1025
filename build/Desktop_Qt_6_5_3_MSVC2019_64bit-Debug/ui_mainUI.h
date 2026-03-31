@@ -161,7 +161,6 @@ public:
     QLabel *label_14;
     QLabel *label_18;
     QLineEdit *angleLFEdit;
-    QPushButton *bodyPoseZeroBtn;
     QLabel *label_15;
     QLabel *label_21;
     QLabel *label_22;
@@ -171,6 +170,11 @@ public:
     QLabel *label_20;
     QLabel *label_29;
     QLineEdit *angleLIFTEdit;
+    QWidget *verticalLayoutWidget_3;
+    QVBoxLayout *verticalLayout_3;
+    QPushButton *bodyPoseZeroBtn;
+    QPushButton *wheelStartBtn;
+    QPushButton *wheelStopBtn;
     QWidget *curvePage;
     QChartView *poseXView;
     QChartView *poseYView;
@@ -197,6 +201,7 @@ public:
     QRadioButton *DragModeBtn;
     QRadioButton *SCModeBtn;
     QRadioButton *MeasureRopeModeBtn;
+    QRadioButton *wheelModeBtn;
 
     void setupUi(QWidget *mainUI)
     {
@@ -234,7 +239,7 @@ public:
         mainPage->setObjectName("mainPage");
         modeStackedWidget = new QStackedWidget(mainPage);
         modeStackedWidget->setObjectName("modeStackedWidget");
-        modeStackedWidget->setGeometry(QRect(50, 290, 291, 561));
+        modeStackedWidget->setGeometry(QRect(50, 310, 291, 561));
         MeasureRopeModePage = new QWidget();
         MeasureRopeModePage->setObjectName("MeasureRopeModePage");
         measureRopeTitleLabel = new QLabel(MeasureRopeModePage);
@@ -607,9 +612,6 @@ public:
         angleLFEdit = new QLineEdit(dataPage);
         angleLFEdit->setObjectName("angleLFEdit");
         angleLFEdit->setGeometry(QRect(130, 74, 100, 25));
-        bodyPoseZeroBtn = new QPushButton(dataPage);
-        bodyPoseZeroBtn->setObjectName("bodyPoseZeroBtn");
-        bodyPoseZeroBtn->setGeometry(QRect(330, 310, 71, 51));
         label_15 = new QLabel(dataPage);
         label_15->setObjectName("label_15");
         label_15->setGeometry(QRect(290, 80, 31, 16));
@@ -637,6 +639,27 @@ public:
         angleLIFTEdit = new QLineEdit(dataPage);
         angleLIFTEdit->setObjectName("angleLIFTEdit");
         angleLIFTEdit->setGeometry(QRect(130, 180, 100, 25));
+        verticalLayoutWidget_3 = new QWidget(dataPage);
+        verticalLayoutWidget_3->setObjectName("verticalLayoutWidget_3");
+        verticalLayoutWidget_3->setGeometry(QRect(320, 280, 161, 111));
+        verticalLayout_3 = new QVBoxLayout(verticalLayoutWidget_3);
+        verticalLayout_3->setObjectName("verticalLayout_3");
+        verticalLayout_3->setContentsMargins(0, 0, 0, 0);
+        bodyPoseZeroBtn = new QPushButton(verticalLayoutWidget_3);
+        bodyPoseZeroBtn->setObjectName("bodyPoseZeroBtn");
+
+        verticalLayout_3->addWidget(bodyPoseZeroBtn);
+
+        wheelStartBtn = new QPushButton(verticalLayoutWidget_3);
+        wheelStartBtn->setObjectName("wheelStartBtn");
+
+        verticalLayout_3->addWidget(wheelStartBtn);
+
+        wheelStopBtn = new QPushButton(verticalLayoutWidget_3);
+        wheelStopBtn->setObjectName("wheelStopBtn");
+
+        verticalLayout_3->addWidget(wheelStopBtn);
+
         tabWidget->addTab(dataPage, QString());
         curvePage = new QWidget();
         curvePage->setObjectName("curvePage");
@@ -701,7 +724,7 @@ public:
         tabWidget->addTab(webcamPage, QString());
         verticalLayoutWidget_2 = new QWidget(mainPage);
         verticalLayoutWidget_2->setObjectName("verticalLayoutWidget_2");
-        verticalLayoutWidget_2->setGeometry(QRect(90, 70, 161, 191));
+        verticalLayoutWidget_2->setGeometry(QRect(90, 70, 161, 211));
         verticalLayout_2 = new QVBoxLayout(verticalLayoutWidget_2);
         verticalLayout_2->setObjectName("verticalLayout_2");
         verticalLayout_2->setContentsMargins(0, 0, 0, 0);
@@ -735,6 +758,11 @@ public:
 
         verticalLayout_2->addWidget(MeasureRopeModeBtn);
 
+        wheelModeBtn = new QRadioButton(verticalLayoutWidget_2);
+        wheelModeBtn->setObjectName("wheelModeBtn");
+
+        verticalLayout_2->addWidget(wheelModeBtn);
+
         mainStackedWidget->addWidget(mainPage);
         tabWidget->raise();
         modeStackedWidget->raise();
@@ -743,8 +771,8 @@ public:
         retranslateUi(mainUI);
 
         mainStackedWidget->setCurrentIndex(1);
-        modeStackedWidget->setCurrentIndex(4);
-        tabWidget->setCurrentIndex(3);
+        modeStackedWidget->setCurrentIndex(5);
+        tabWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(mainUI);
@@ -854,13 +882,15 @@ public:
         label_17->setText(QCoreApplication::translate("mainUI", "LB", nullptr));
         label_14->setText(QCoreApplication::translate("mainUI", "\347\224\265\346\234\272\350\275\254\350\247\222", nullptr));
         label_18->setText(QCoreApplication::translate("mainUI", "RB", nullptr));
-        bodyPoseZeroBtn->setText(QCoreApplication::translate("mainUI", "XY\345\275\222\351\233\266", nullptr));
         label_15->setText(QCoreApplication::translate("mainUI", "RF", nullptr));
         label_21->setText(QCoreApplication::translate("mainUI", "Y", nullptr));
         label_22->setText(QCoreApplication::translate("mainUI", "Z", nullptr));
         saveDataBtn->setText(QCoreApplication::translate("mainUI", "\344\277\235\345\255\230\346\225\260\346\215\256", nullptr));
         label_20->setText(QCoreApplication::translate("mainUI", "X", nullptr));
         label_29->setText(QCoreApplication::translate("mainUI", "\345\271\263\345\217\260", nullptr));
+        bodyPoseZeroBtn->setText(QCoreApplication::translate("mainUI", "XY\345\275\222\351\233\266", nullptr));
+        wheelStartBtn->setText(QCoreApplication::translate("mainUI", "\345\212\250\351\207\217\350\275\256\345\220\257\345\212\250", nullptr));
+        wheelStopBtn->setText(QCoreApplication::translate("mainUI", "\345\212\250\351\207\217\350\275\256\345\201\234\346\255\242", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(dataPage), QCoreApplication::translate("mainUI", " \346\225\260\346\215\256\346\230\276\347\244\272", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(curvePage), QCoreApplication::translate("mainUI", "\345\256\236\346\227\266\346\233\262\347\272\277", nullptr));
         shootBtn->setText(QCoreApplication::translate("mainUI", "\346\213\215\347\205\247", nullptr));
@@ -878,6 +908,7 @@ public:
         DragModeBtn->setText(QCoreApplication::translate("mainUI", "\346\213\226\345\212\250\346\250\241\345\274\217", nullptr));
         SCModeBtn->setText(QCoreApplication::translate("mainUI", "\350\207\252\346\240\207\345\256\232\346\250\241\345\274\217", nullptr));
         MeasureRopeModeBtn->setText(QCoreApplication::translate("mainUI", "\346\265\213\351\207\217\345\210\235\345\247\213\347\273\263\351\225\277\346\250\241\345\274\217", nullptr));
+        wheelModeBtn->setText(QCoreApplication::translate("mainUI", "\345\212\250\351\207\217\350\275\256\346\216\247\345\210\266\347\225\214\351\235\242", nullptr));
     } // retranslateUi
 
 };

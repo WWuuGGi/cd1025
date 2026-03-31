@@ -5,6 +5,7 @@
 #include "FreeRTOS.h"
 #include "task.h"
 #include "winch.h"
+#include "JY901S.h"
 
 // 机器人参数
 static const float H[3][3] = {
@@ -44,14 +45,14 @@ static uint32_t Motor_PWM_Channel[4] = {TIM_CHANNEL_1, TIM_CHANNEL_2, TIM_CHANNE
 
 static Wheel_Typedef *wheel_instance = NULL;
 
-Wheel_Typedef *Wheel_Create(void)
+Wheel_Typedef *Wheel_Create(Winch *winch)
 {
     Wheel_Typedef *wheel = (Wheel_Typedef *)malloc(sizeof(Wheel_Typedef));
     if (wheel == NULL)
         return NULL;
     memset(wheel, 0, sizeof(Wheel_Typedef));
 
-    wheel->imu = winch->imu;
+    wheel->imu = winch->pose;
     for (uint8_t i = 0; i < 4; i++)
     {
         wheel->wheel_motor[i] = Nidec_Motor_Create(i + 1);
@@ -70,7 +71,7 @@ void Wheel_Set_Qd(void)
     if (wheel_instance->imu_ZeroFlag)
     {
         // XY轴角度置0
-        IMU_SetZero();
+        JY901S_SetZero();
         HAL_Delay(2000);
         // 期望四元数设为当前四元数(Z轴角度无法置0)
         memcpy(wheel_instance->qd, wheel_instance->imu->q, sizeof(float) * 4);
@@ -212,23 +213,27 @@ void Wheel_Set_PWM(float tau[4])
 
 void Wheel_RxCallback(uint8_t *data)
 {
-    if ((data[2] == 'z') && (data[3] == 'e') && (data[4] == 'r') && (data[5] == 'o'))
-        wheel_instance->imu_ZeroFlag = 1;
-    if ((data[2] == 's') && (data[3] == 't') && (data[4] == 'a') && (data[5] == 'r') && (data[6] == 't'))
-        wheel_instance->wheel_mode = WHEEL_MODE_ENABLED;
-    if ((data[2] == 's') && (data[3] == 't') && (data[4] == 'o') && (data[5] == 'p'))
-        wheel_instance->wheel_mode = WHEEL_MODE_STOP;
+    if((data[0] == '$') && (data[1] == 'W'))
+    {
+        if ((data[2] == 'z') && (data[3] == 'e') && (data[4] == 'r') && (data[5] == 'o'))
+            wheel_instance->imu_ZeroFlag = 1;
+        if ((data[2] == 's') && (data[3] == 't') && (data[4] == 'a') && (data[5] == 'r') && (data[6] == 't'))
+            wheel_instance->wheel_mode = WHEEL_MODE_ENABLED;
+        if ((data[2] == 's') && (data[3] == 't') && (data[4] == 'o') && (data[5] == 'p'))
+            wheel_instance->wheel_mode = WHEEL_MODE_STOP;
+    }
 }
 
 void Wheel_Test(void)
 {
-    // HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
-    // for (uint8_t i = 0; i < 4; i++)
-    // {
-    // 	HAL_GPIO_WritePin(Motor_Dir_GPIO_Port[i], Motor_Dir_Pin[i], GPIO_PIN_RESET);
-    //     __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[i], 8000);
-    // }
-    // vTaskDelay(4000);
+    HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
+    for (uint8_t i = 0; i < 4; i++)
+    {
+    	HAL_GPIO_WritePin(Motor_Dir_GPIO_Port[i], Motor_Dir_Pin[i], GPIO_PIN_RESET);
+        __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[i], 8000);
+    }
+    vTaskDelay(4000);
+    
     // for (uint8_t i = 0; i < 4; i++)
     // {
     //     __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[i], 7500);
@@ -242,10 +247,13 @@ void Wheel_Test(void)
     // HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_RESET);
     // vTaskDelay(2000);
 
-    HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(Motor_Dir_GPIO_Port[0], Motor_Dir_Pin[0], GPIO_PIN_RESET);
-//    __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[0], 8300);
-//    vTaskDelay(2000);
+    // HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
+    // HAL_GPIO_WritePin(Motor_Dir_GPIO_Port[0], Motor_Dir_Pin[0], GPIO_PIN_RESET);
+    // wheel_instance->pwm[3] = 7800;
+    // __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[3], wheel_instance->pwm[3]);
+    // vTaskDelay(2000);
+
+
 //    __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[0], 8250);
 //    vTaskDelay(2000);
 //    __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[0], 8200);
@@ -273,18 +281,18 @@ void Wheel_Test(void)
     // HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_RESET);
     // vTaskDelay(2000);
 
-    wheel_instance->tau[0] = 0.0f;
-    vTaskDelay(4000);
-    wheel_instance->tau[0] = 0.003f;
-    vTaskDelay(2000);
-    wheel_instance->tau[0] = 0.006f;
-    vTaskDelay(2000);
-    wheel_instance->tau[0] = 0.00f;
-    vTaskDelay(6000);
-    wheel_instance->tau[0] = -0.006f;
-    vTaskDelay(2000);
-    wheel_instance->tau[0] = -0.003f;
-    vTaskDelay(2000);
+//    wheel_instance->tau[0] = 0.0f;
+//    vTaskDelay(4000);
+//    wheel_instance->tau[0] = 0.003f;
+//    vTaskDelay(2000);
+//    wheel_instance->tau[0] = 0.006f;
+//    vTaskDelay(2000);
+//    wheel_instance->tau[0] = 0.00f;
+//    vTaskDelay(6000);
+//    wheel_instance->tau[0] = -0.006f;
+//    vTaskDelay(2000);
+//    wheel_instance->tau[0] = -0.003f;
+//    vTaskDelay(2000);
 }
 
 void Wheel_Run_Tau(void)
@@ -335,8 +343,8 @@ void Wheel_Run_Tau(void)
     wheel_instance->pwm[0] = (uint16_t)(8399.0f - duty * 8399.0f);
 
     // PWM限幅
-    if (wheel_instance->pwm[0] < 5000)
-        wheel_instance->pwm[0] = 5000;
+    if (wheel_instance->pwm[0] < 7500)
+        wheel_instance->pwm[0] = 7500;
 
     if (wheel_instance->tau[0] == 0.0035f)
         wheel_instance->pwm[0] = 8399;

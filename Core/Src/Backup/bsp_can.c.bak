@@ -143,14 +143,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan)
 	TxData_58[5] = (uint8_t)(cm7_iq & 0xFF);
 	TxData_58[6] = (uint8_t)(cm8_iq >> 8);
 	TxData_58[7] = (uint8_t)(cm8_iq & 0xFF);
-	// TxData_58[0] = (uint8_t)(cm1_iq >> 8);
-	// TxData_58[1] = (uint8_t)(cm1_iq & 0xFF);
-	// TxData_58[2] = (uint8_t)(cm2_iq >> 8);
-	// TxData_58[3] = (uint8_t)(cm2_iq & 0xFF);
-	// TxData_58[4] = (uint8_t)(cm3_iq >> 8);
-	// TxData_58[5] = (uint8_t)(cm3_iq & 0xFF);
-	// TxData_58[6] = (uint8_t)(cm4_iq >> 8);
-	// TxData_58[7] = (uint8_t)(cm4_iq & 0xFF);
     uint32_t Can_TxMailbox_58;
 	HAL_CAN_AddTxMessage(hcan, &TxHeader_58, TxData_58, &Can_TxMailbox_58);
  }

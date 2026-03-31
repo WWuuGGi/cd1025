@@ -45,3 +45,5 @@ cd1025\bsp.o: D:\keil5\ARM\ARMCC\Bin\..\include\string.h
 cd1025\bsp.o: ../Core/Inc/bsp_motor.h
 cd1025\bsp.o: ../Core/Inc/bsp_uart.h
 cd1025\bsp.o: ../Core/Inc/usart.h
+cd1025\bsp.o: ../Core/Inc/bsp_nidec.h
+cd1025\bsp.o: ../Core/Inc/tim.h

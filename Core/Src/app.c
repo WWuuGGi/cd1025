@@ -20,15 +20,16 @@ void APP_Layer_Init()
     Winch_Drvier_Init();
     winch = Winch_Create();
     Winch_SetPID(winch);
-    wheel = Wheel_Create();
+    wheel = Wheel_Create(winch);
 }
 
 void APP_WheelTask(void)
 {
     Wheel_Set_Qd();
     Wheel_Motor_Update();
-    // Wheel_Run_Tau();
-    Stable_Control();
+    //Wheel_Run_Tau();
+    //Stable_Control();
+    Wheel_Test();
 }
 
 
@@ -54,15 +55,25 @@ void APP_UploadData()
     upload_data[1] = 0x55;
 
     //姿态（保留 X/Y/Z 角，仅用于基本监测）
-    upload_data[2] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x000000FF;
-    upload_data[3] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[4] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[5] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) >> 24;
+    // upload_data[2] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x000000FF;
+    // upload_data[3] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x0000FF00) >> 8;
+    // upload_data[4] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x00FF0000) >> 16;
+    // upload_data[5] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) >> 24;
 
-    upload_data[6] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x000000FF;
-    upload_data[7] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x0000FF00) >> 8;
-    upload_data[8] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x00FF0000) >> 16;
-    upload_data[9] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) >> 24;
+    // upload_data[6] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x000000FF;
+    // upload_data[7] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x0000FF00) >> 8;
+    // upload_data[8] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x00FF0000) >> 16;
+    // upload_data[9] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) >> 24;
+
+    upload_data[2] = (wheel->pwm[0]) & 0x000000FF;
+    upload_data[3] = ((wheel->pwm[0]) & 0x0000FF00) >> 8;
+    upload_data[4] = (wheel->pwm[1]) & 0x000000FF;
+    upload_data[5] = ((wheel->pwm[1]) & 0x000000FF) >> 8;
+
+    upload_data[6] = (wheel->pwm[2]) & 0x000000FF;
+    upload_data[7] = ((wheel->pwm[2]) & 0x0000FF00) >> 8;
+    upload_data[8] = (wheel->pwm[3]) & 0x000000FF;
+    upload_data[9] = ((wheel->pwm[3]) & 0x0000FF00) >> 8;
 
     upload_data[10] = ((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x000000FF;
     upload_data[11] = (((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x0000FF00) >> 8;

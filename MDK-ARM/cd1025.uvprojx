@@ -455,6 +455,21 @@
               <FilePath>..\Core\Src\winch.c</FilePath>
             </File>
             <File>
+              <FileName>bsp_nidec.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\bsp_nidec.c</FilePath>
+            </File>
+            <File>
+              <FileName>math.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\math.c</FilePath>
+            </File>
+            <File>
+              <FileName>wheel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\wheel.c</FilePath>
+            </File>
+            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/main.c</FilePath>

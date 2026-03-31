@@ -606,14 +606,21 @@ void mainUI::DrawLine()
 void mainUI::on_bodyPoseZeroBtn_clicked()
 {
     QByteArray TxData;
-    TxData = "Pose";
+    TxData = "$Wzero";
     MySerialPort->write(TxData);
 }
 
-void mainUI::on_endPoseZeroBtn_clicked()
+void mainUI::on_wheelStartBtn_clicked()
 {
     QByteArray TxData;
-    TxData = "End";
+    TxData = "$Wstart";
+    MySerialPort->write(TxData);
+}
+
+void mainUI::on_wheelStopBtn_clicked()
+{
+    QByteArray TxData;
+    TxData = "$Wstop";
     MySerialPort->write(TxData);
 }
 

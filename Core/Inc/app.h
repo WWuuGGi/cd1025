@@ -3,6 +3,7 @@
 
 #include "winch.h"
 #include "trajectory.h"
+#include "wheel.h"
 
 void APP_Layer_Init(void);
 void APP_WinchTask(void);

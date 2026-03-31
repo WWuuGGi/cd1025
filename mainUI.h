@@ -109,7 +109,9 @@ private slots:
     // 九轴姿态传感器XY角度归零
     void on_bodyPoseZeroBtn_clicked();
 
-    void on_endPoseZeroBtn_clicked();
+    void on_wheelStartBtn_clicked();
+
+    void on_wheelStopBtn_clicked();
 
     // 运动模式选择
     void on_SModeBtn_pressed();

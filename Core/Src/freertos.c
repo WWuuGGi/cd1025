@@ -55,6 +55,7 @@ osThreadId WinchTaskHandle;
 osThreadId TrjTaskHandle;
 osThreadId UploadTaskHandle;
 osThreadId SendPoseTaskHandle;
+osThreadId Wheel_TaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -67,6 +68,7 @@ void StartWinchTask(void const * argument);
 void StartTrjTask(void const * argument);
 void StartUploadTask(void const * argument);
 void StartSendPoseTask(void const * argument);
+void StartWheelTask(void const * argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -137,6 +139,10 @@ void MX_FREERTOS_Init(void) {
   osThreadDef(SendPoseTask, StartSendPoseTask, osPriorityIdle, 0, 128);
   SendPoseTaskHandle = osThreadCreate(osThread(SendPoseTask), NULL);
 
+  /* definition and creation of Wheel_Task */
+  osThreadDef(Wheel_Task, StartWheelTask, osPriorityIdle, 0, 256);
+  Wheel_TaskHandle = osThreadCreate(osThread(Wheel_Task), NULL);
+
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
@@ -196,7 +202,7 @@ void StartWinchTask(void const * argument)
   for(;;)
   {
     APP_WinchTask();
-    vTaskDelayUntil(&currentTimeWinch, 5);
+    vTaskDelayUntil(&currentTimeWinch, pdMS_TO_TICKS(5));
   }
   /* USER CODE END StartWinchTask */
 }
@@ -217,7 +223,7 @@ void StartTrjTask(void const * argument)
   for(;;)
   {
     APP_StartTrj();
-    vTaskDelayUntil(&currentTimeTrj, 10);
+    vTaskDelayUntil(&currentTimeTrj, pdMS_TO_TICKS(10));
   }
   /* USER CODE END StartTrjTask */
 }
@@ -238,7 +244,7 @@ void StartUploadTask(void const * argument)
   for(;;)
   {
     APP_UploadData();
-    vTaskDelayUntil(&currentTimeUpload, 100/portTICK_RATE_MS);
+    vTaskDelayUntil(&currentTimeUpload, pdMS_TO_TICKS(100));
   }
   /* USER CODE END StartUploadTask */
 }
@@ -259,9 +265,29 @@ void StartSendPoseTask(void const * argument)
   for(;;)
   {
     APP_SendPose();
-    vTaskDelayUntil(&currentTimeSendPose, 100/portTICK_RATE_MS);
+    vTaskDelayUntil(&currentTimeSendPose, pdMS_TO_TICKS(100));
   }
   /* USER CODE END StartSendPoseTask */
+}
+
+/* USER CODE BEGIN Header_StartWheelTask */
+/**
+* @brief Function implementing the Wheel_Task thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartWheelTask */
+void StartWheelTask(void const * argument)
+{
+  /* USER CODE BEGIN StartWheelTask */
+  portTickType currentTimeWheel = xTaskGetTickCount();
+  /* Infinite loop */
+  for(;;)
+  {
+    APP_WheelTask();
+    vTaskDelayUntil(&currentTimeWheel, pdMS_TO_TICKS(5)); // 控制频率为200Hz
+  }
+  /* USER CODE END StartWheelTask */
 }
 
 /* Private application code --------------------------------------------------*/

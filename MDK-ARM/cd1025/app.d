@@ -43,3 +43,10 @@ cd1025\app.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 cd1025\app.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 cd1025\app.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 cd1025\app.o: ../Core/Inc/trajectory.h
+cd1025\app.o: ../Core/Inc/wheel.h
+cd1025\app.o: ../Core/Inc/bsp_imu.h
+cd1025\app.o: ../Core/Inc/mytype.h
+cd1025\app.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdarg.h
+cd1025\app.o: D:\keil5\ARM\ARMCC\Bin\..\include\stdbool.h
+cd1025\app.o: ../Core/Inc/bsp_nidec.h
+cd1025\app.o: ../Core/Inc/tim.h

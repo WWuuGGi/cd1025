@@ -702,3 +702,4 @@ void imu_update()
 	imu_ahrs_update();
 	imu_attitude_update();
 }
+
