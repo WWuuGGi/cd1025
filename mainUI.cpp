@@ -349,12 +349,15 @@ void mainUI::on_beginBtn_clicked()
 // 串口接收数据并解析
 QByteArray rxbuff;
 float angle[5], bodyPose[3], velocityPose[3];
+uint16_t pwm[4];
+float filtered_speed[4],tau[4];
 uint8_t trj_index = 0;
 QString angleStr[5], bodyPoseStr[3], velocityPoseStr[3];
+QString pwmStr[4], filtered_speedStr[4], tauStr[4];
 
 uint8_t Res;  //读取到的每一字节数据
 int16_t USART_RX_STA = 0; //接收状态标志
-#define USART_REC_LEN 45 //定义最大接收字节数
+#define USART_REC_LEN 85 //定义最大接收字节数
 uint8_t USART_RX_BUF[USART_REC_LEN]; //接收缓冲区
 // 串口接收定时器
 void mainUI::SerialTimerStart()
@@ -444,6 +447,22 @@ void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
 
     trj_index = data[44];
 
+    pwm[0] = (uint16_t)((uint16_t)data[45] | ((uint16_t)data[46] << 8));
+    pwm[1] = (uint16_t)((uint16_t)data[47] | ((uint16_t)data[48] << 8));
+    pwm[2] = (uint16_t)((uint16_t)data[49] | ((uint16_t)data[50] << 8));
+    pwm[3] = (uint16_t)((uint16_t)data[51] | ((uint16_t)data[52] << 8));
+
+    filtered_speed[0] = ((float)((int32_t)(data[53] | (((uint32_t)data[54]) << 8) | (((uint32_t)data[55]) << 16) | (((uint32_t)data[56]) << 24)))) / 1000.0f;
+    filtered_speed[1] = ((float)((int32_t)(data[57] | (((uint32_t)data[58]) << 8) | (((uint32_t)data[59]) << 16) | (((uint32_t)data[60]) << 24)))) / 1000.0f;
+    filtered_speed[2] = ((float)((int32_t)(data[61] | (((uint32_t)data[62]) << 8) | (((uint32_t)data[63]) << 16) | (((uint32_t)data[64]) << 24)))) / 1000.0f;
+    filtered_speed[3] = ((float)((int32_t)(data[65] | (((uint32_t)data[66]) << 8) | (((uint32_t)data[67]) << 16) | (((uint32_t)data[68]) << 24)))) / 1000.0f;
+
+    tau[0] = ((float)((int32_t)(data[69] | (((uint32_t)data[70]) << 8) | (((uint32_t)data[71]) << 16) | (((uint32_t)data[72]) << 24)))) / 1000.0f;
+    tau[1] = ((float)((int32_t)(data[73] | (((uint32_t)data[74]) << 8) | (((uint32_t)data[75]) << 16) | (((uint32_t)data[76]) << 24)))) / 1000.0f;
+    tau[2] = ((float)((int32_t)(data[77] | (((uint32_t)data[78]) << 8) | (((uint32_t)data[79]) << 16) | (((uint32_t)data[80]) << 24)))) / 1000.0f;
+    tau[3] = ((float)((int32_t)(data[81] | (((uint32_t)data[82]) << 8) | (((uint32_t)data[83]) << 16) | (((uint32_t)data[84]) << 24)))) / 1000.0f;
+
+
     for(int i=0; i<3; i++)
     {
         bodyPoseStr[i] = QString::number(bodyPose[i],'f',3);
@@ -453,6 +472,21 @@ void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
     for(int i=0; i<5; i++)
     {
         angleStr[i] = QString::number(angle[i],'f',3);
+    }
+
+    for(int i = 0; i<4; i++)
+    {
+        tauStr[i] = QString::number(tau[i],'f',3);
+    }
+
+    for(int i = 0; i<4; i++)
+    {
+        filtered_speedStr[i] = QString::number(filtered_speed[i],'f',3);
+    }
+
+    for(int i = 0; i<4; i++)
+    {
+        pwmStr[i] = QString::number(pwm[i],10);
     }
 
     ui->angleRFEdit->setText(angleStr[0]);
@@ -468,6 +502,22 @@ void mainUI::DataProcess(uint8_t *data) //处理的数据不包含包头
     ui->velocityPoseXEdit->setText(velocityPoseStr[0]);
     ui->velocityPoseYEdit->setText(velocityPoseStr[1]);
     ui->velocityPoseZEdit->setText(velocityPoseStr[2]);
+
+    ui->pwm1Edit->setText(pwmStr[0]);
+    ui->pwm2Edit->setText(pwmStr[1]);
+    ui->pwm3Edit->setText(pwmStr[2]);
+    ui->pwm4Edit->setText(pwmStr[3]);
+
+    ui->fspd1Edit->setText(filtered_speedStr[0]);
+    ui->fspd2Edit->setText(filtered_speedStr[1]);
+    ui->fspd3Edit->setText(filtered_speedStr[2]);
+    ui->fspd4Edit->setText(filtered_speedStr[3]);
+
+    ui->tau1Edit->setText(tauStr[0]);
+    ui->tau2Edit->setText(tauStr[1]);
+    ui->tau3Edit->setText(tauStr[2]);
+    ui->tau4Edit->setText(tauStr[3]);
+
 
     UpdateData();
 }

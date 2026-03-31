@@ -226,14 +226,15 @@ void Wheel_RxCallback(uint8_t *data)
 
 void Wheel_Test(void)
 {
-    HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
-    for (uint8_t i = 0; i < 4; i++)
-    {
-    	HAL_GPIO_WritePin(Motor_Dir_GPIO_Port[i], Motor_Dir_Pin[i], GPIO_PIN_RESET);
-        __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[i], 8000);
-    }
-    vTaskDelay(4000);
-    
+    // HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
+    // for (uint8_t i = 0; i < 4; i++)
+    // {
+	// 		wheel_instance->pwm[i] = 7800;
+    // 	HAL_GPIO_WritePin(Motor_Dir_GPIO_Port[i], Motor_Dir_Pin[i], GPIO_PIN_SET);
+	// 		__HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[i], wheel_instance->pwm[i]);
+    // }
+    // vTaskDelay(4000);
+
     // for (uint8_t i = 0; i < 4; i++)
     // {
     //     __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[i], 7500);
@@ -285,8 +286,8 @@ void Wheel_Test(void)
 //    vTaskDelay(4000);
 //    wheel_instance->tau[0] = 0.003f;
 //    vTaskDelay(2000);
-//    wheel_instance->tau[0] = 0.006f;
-//    vTaskDelay(2000);
+   wheel_instance->tau[0] = 0.006f;
+   vTaskDelay(2000);
 //    wheel_instance->tau[0] = 0.00f;
 //    vTaskDelay(6000);
 //    wheel_instance->tau[0] = -0.006f;
@@ -298,10 +299,10 @@ void Wheel_Test(void)
 void Wheel_Run_Tau(void)
 {
     HAL_GPIO_WritePin(Motor_Enable_GPIO_Port, Motor_Enable_Pin, GPIO_PIN_SET);
-
+    wheel_instance->tau[0] = 0.00f;
     // 计算期望电压 U = E + I*R = Ke*w + (tau/Kt)*Rc
     //float V_fric = 0.454f; // 摩擦电压补偿
-		float V_fric = 0.44f; // 摩擦电压补偿
+    float V_fric = 0.44f; // 摩擦电压补偿
     float E_back = Ke * wheel_instance->wheel_motor[0]->filtered_speed; // 反电动势
 
     // 根据电机方向补偿摩擦
@@ -343,11 +344,12 @@ void Wheel_Run_Tau(void)
     wheel_instance->pwm[0] = (uint16_t)(8399.0f - duty * 8399.0f);
 
     // PWM限幅
-    if (wheel_instance->pwm[0] < 7500)
-        wheel_instance->pwm[0] = 7500;
+    if (wheel_instance->pwm[0] < 4500)
+        wheel_instance->pwm[0] = 4500;
 
     if (wheel_instance->tau[0] == 0.0035f)
         wheel_instance->pwm[0] = 8399;
 
     __HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[0], wheel_instance->pwm[0]);
+    //__HAL_TIM_SET_COMPARE(&htim8, Motor_PWM_Channel[0], 7800);
 }

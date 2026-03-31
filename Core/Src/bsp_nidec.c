@@ -89,6 +89,7 @@ void Nidec_Data_Update(Nidec_Typedef *motor)
     }
 
     // 计算电机速度
+    //弧度制角速度 如果一秒一圈就是6.28 rad/s
     motor->raw_speed = delta_counter * 2 * 3.14f / motor->CPR / motor->Ts;
     motor->raw_speed = -motor->raw_speed; // 方向调整
 

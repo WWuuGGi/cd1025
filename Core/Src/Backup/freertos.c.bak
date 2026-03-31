@@ -202,7 +202,7 @@ void StartWinchTask(void const * argument)
   for(;;)
   {
     APP_WinchTask();
-    vTaskDelayUntil(&currentTimeWinch, 5);
+    vTaskDelayUntil(&currentTimeWinch, pdMS_TO_TICKS(5));
   }
   /* USER CODE END StartWinchTask */
 }
@@ -223,7 +223,7 @@ void StartTrjTask(void const * argument)
   for(;;)
   {
     APP_StartTrj();
-    vTaskDelayUntil(&currentTimeTrj, 10);
+    vTaskDelayUntil(&currentTimeTrj, pdMS_TO_TICKS(10));
   }
   /* USER CODE END StartTrjTask */
 }
@@ -244,7 +244,7 @@ void StartUploadTask(void const * argument)
   for(;;)
   {
     APP_UploadData();
-    vTaskDelayUntil(&currentTimeUpload, 100/portTICK_RATE_MS);
+    vTaskDelayUntil(&currentTimeUpload, pdMS_TO_TICKS(100));
   }
   /* USER CODE END StartUploadTask */
 }
@@ -265,7 +265,7 @@ void StartSendPoseTask(void const * argument)
   for(;;)
   {
     APP_SendPose();
-    vTaskDelayUntil(&currentTimeSendPose, 100/portTICK_RATE_MS);
+    vTaskDelayUntil(&currentTimeSendPose, pdMS_TO_TICKS(100));
   }
   /* USER CODE END StartSendPoseTask */
 }
@@ -285,7 +285,7 @@ void StartWheelTask(void const * argument)
   for(;;)
   {
     APP_WheelTask();
-    vTaskDelayUntil(&currentTimeWheel, 5); // 控制频率为200Hz
+    vTaskDelayUntil(&currentTimeWheel, pdMS_TO_TICKS(5)); // 控制频率为200Hz
   }
   /* USER CODE END StartWheelTask */
 }

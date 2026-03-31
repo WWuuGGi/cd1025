@@ -2,7 +2,7 @@
 
 Wheel_Typedef *wheel;
 Winch *winch;
-uint8_t upload_data[47];
+uint8_t upload_data[87];
 uint8_t pose_data[8];
 
 // 调试变量（已注释，需要时取消注释）
@@ -27,7 +27,7 @@ void APP_WheelTask(void)
 {
     Wheel_Set_Qd();
     Wheel_Motor_Update();
-    //Wheel_Run_Tau();
+    Wheel_Run_Tau();
     //Stable_Control();
     Wheel_Test();
 }
@@ -55,32 +55,21 @@ void APP_UploadData()
     upload_data[1] = 0x55;
 
     //姿态（保留 X/Y/Z 角，仅用于基本监测）
-    // upload_data[2] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x000000FF;
-    // upload_data[3] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x0000FF00) >> 8;
-    // upload_data[4] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x00FF0000) >> 16;
-    // upload_data[5] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) >> 24;
+    upload_data[2] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x000000FF;
+    upload_data[3] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[4] = (((int32_t)(winch->pose->euler[0] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[5] = ((int32_t)(winch->pose->euler[0] * 1000.0f)) >> 24;
 
-    // upload_data[6] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x000000FF;
-    // upload_data[7] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x0000FF00) >> 8;
-    // upload_data[8] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x00FF0000) >> 16;
-    // upload_data[9] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) >> 24;
-
-    upload_data[2] = (wheel->pwm[0]) & 0x000000FF;
-    upload_data[3] = ((wheel->pwm[0]) & 0x0000FF00) >> 8;
-    upload_data[4] = (wheel->pwm[1]) & 0x000000FF;
-    upload_data[5] = ((wheel->pwm[1]) & 0x000000FF) >> 8;
-
-    upload_data[6] = (wheel->pwm[2]) & 0x000000FF;
-    upload_data[7] = ((wheel->pwm[2]) & 0x0000FF00) >> 8;
-    upload_data[8] = (wheel->pwm[3]) & 0x000000FF;
-    upload_data[9] = ((wheel->pwm[3]) & 0x0000FF00) >> 8;
-
+    upload_data[6] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x000000FF;
+    upload_data[7] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[8] = (((int32_t)(winch->pose->euler[1] * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[9] = ((int32_t)(winch->pose->euler[1] * 1000.0f)) >> 24;
+	
     upload_data[10] = ((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x000000FF;
     upload_data[11] = (((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x0000FF00) >> 8;
     upload_data[12] = (((int32_t)(winch->pose->euler[2] * 1000.0f)) & 0x00FF0000) >> 16;
     upload_data[13] = ((int32_t)(winch->pose->euler[2] * 1000.0f)) >> 24;
 
-    //电机转角（前三路：直接使用 data_process 的 now_pos）
     upload_data[14] = ((int32_t)(winch->CAN1_M2006[0]->now_pos * 1000.0f)) & 0x000000FF;
     upload_data[15] = (((int32_t)(winch->CAN1_M2006[0]->now_pos * 1000.0f)) & 0x0000FF00) >> 8;
     upload_data[16] = (((int32_t)(winch->CAN1_M2006[0]->now_pos * 1000.0f)) & 0x00FF0000) >> 16;
@@ -105,7 +94,6 @@ void APP_UploadData()
     upload_data[31] = (((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) & 0x0000FF00) >> 8;
     upload_data[32] = (((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) & 0x00FF0000) >> 16;
     upload_data[33] = ((int32_t)(winch->CAN1_M2006[4]->now_pos * 1000.0f)) >> 24;
-
     //姿态角速度
     upload_data[34] = ((int32_t)(winch->pose->omega[0] * 1000.0f)) & 0x000000FF;
     upload_data[35] = (((int32_t)(winch->pose->omega[0] * 1000.0f)) & 0x0000FF00) >> 8;
@@ -123,6 +111,67 @@ void APP_UploadData()
     upload_data[45] = ((int32_t)(winch->pose->omega[2] * 1000.0f)) >> 24;
 
     upload_data[46] = winch->trj_index;
+
+        //------------------------------------------------------------------------------
+
+    upload_data[47] = (wheel->pwm[0]) & 0x000000FF;
+    upload_data[48] = ((wheel->pwm[0]) & 0x0000FF00) >> 8;
+    upload_data[49] = (wheel->pwm[1]) & 0x000000FF;
+    upload_data[50] = ((wheel->pwm[1]) & 0x0000FF00) >> 8;
+
+    upload_data[51] = (wheel->pwm[2]) & 0x000000FF;
+    upload_data[52] = ((wheel->pwm[2]) & 0x0000FF00) >> 8;
+    upload_data[53] = (wheel->pwm[3]) & 0x000000FF;
+    upload_data[54] = ((wheel->pwm[3]) & 0x0000FF00) >> 8;
+
+    upload_data[55] = ((int32_t)(wheel->wheel_motor[0]->filtered_speed * 1000.0f)) & 0x000000FF;
+    upload_data[56] = (((int32_t)(wheel->wheel_motor[0]->filtered_speed * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[57] = (((int32_t)(wheel->wheel_motor[0]->filtered_speed * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[58] = ((int32_t)(wheel->wheel_motor[0]->filtered_speed * 1000.0f)) >> 24;
+
+    //电机转角（前三路：直接使用 data_process 的 now_pos）
+    upload_data[59] = ((int32_t)(wheel->wheel_motor[1]->filtered_speed * 1000.0f)) & 0x000000FF;
+    upload_data[60] = (((int32_t)(wheel->wheel_motor[1]->filtered_speed * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[61] = (((int32_t)(wheel->wheel_motor[1]->filtered_speed * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[62] = ((int32_t)(wheel->wheel_motor[1]->filtered_speed * 1000.0f)) >> 24;
+
+    upload_data[63] = ((int32_t)(wheel->wheel_motor[2]->filtered_speed * 1000.0f)) & 0x000000FF;
+    upload_data[64] = (((int32_t)(wheel->wheel_motor[2]->filtered_speed * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[65] = (((int32_t)(wheel->wheel_motor[2]->filtered_speed * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[66] = ((int32_t)(wheel->wheel_motor[2]->filtered_speed * 1000.0f)) >> 24;
+
+    upload_data[67] = ((int32_t)(wheel->wheel_motor[3]->filtered_speed * 1000.0f)) & 0x000000FF;
+    upload_data[68] = (((int32_t)(wheel->wheel_motor[3]->filtered_speed * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[69] = (((int32_t)(wheel->wheel_motor[3]->filtered_speed * 1000.0f)) & 0x00FF0000) >> 16;
+    upload_data[70] = ((int32_t)(wheel->wheel_motor[3]->filtered_speed * 1000.0f)) >> 24;
+
+    upload_data[71] = ((int32_t)(wheel->tau[0] * 1000.0f)) & 0x000000FF;
+    upload_data[72] = (((int32_t)(wheel->tau[0] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[73] = (((int32_t)(wheel->tau[0] * 1000.0f)) & 0x0000FF00) >> 16;
+    upload_data[74] = ((int32_t)(wheel->tau[0] * 1000.0f)) >> 24;
+
+    upload_data[75] = ((int32_t)(wheel->tau[1] * 1000.0f)) & 0x000000FF;
+    upload_data[76] = (((int32_t)(wheel->tau[1] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[77] = (((int32_t)(wheel->tau[1] * 1000.0f)) & 0x0000FF00) >> 16;
+    upload_data[78] = ((int32_t)(wheel->tau[1] * 1000.0f)) >> 24;
+
+    upload_data[79] = ((int32_t)(wheel->tau[2] * 1000.0f)) & 0x000000FF;
+    upload_data[80] = (((int32_t)(wheel->tau[2] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[81] = (((int32_t)(wheel->tau[2] * 1000.0f)) & 0x0000FF00) >> 16;
+    upload_data[82] = ((int32_t)(wheel->tau[2] * 1000.0f)) >> 24;
+
+    upload_data[83] = ((int32_t)(wheel->tau[3] * 1000.0f)) & 0x000000FF;
+    upload_data[84] = (((int32_t)(wheel->tau[3] * 1000.0f)) & 0x0000FF00) >> 8;
+    upload_data[85] = (((int32_t)(wheel->tau[3] * 1000.0f)) & 0x0000FF00) >> 16;
+    upload_data[86] = ((int32_t)(wheel->tau[3] * 1000.0f)) >> 24;
+    //--------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 
